@@ -8,7 +8,7 @@
 <meta name="color-scheme" content="dark">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600&family=IBM+Plex+Sans+KR:wght@200;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600&family=IBM+Plex+Sans+KR:wght@200;400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    Leak by Leak — tokens (DESIGN.md 13)
@@ -24,6 +24,22 @@
   --verdant:#15846e;
   --faint:rgba(255,255,255,.14);
   --iris-tint:rgba(128,82,255,.14);
+
+  /* HUD — home face + CASE FILE only (DESIGN.md 13, 7.1 / 6.7) */
+  --hud-line:rgba(255,255,255,.28);
+  --hud-line-strong:rgba(255,255,255,.5);
+  --hud-label:rgba(255,255,255,.72);
+  --hud-grid:rgba(255,255,255,.05);
+  --glow:rgba(255,255,255,.10);
+  --ramp-low:#8052ff;
+  --ramp-mid:#ff4fa3;
+  --ramp-high:#ffb829;
+  --font-mono:'IBM Plex Mono','IBM Plex Sans KR',ui-monospace,monospace;
+  --text-hud:11px;
+  --text-hud-ko:12px;
+  --inset-size:168px;
+  --inset-zoom:3;
+  --marker:8px;
 
   --cat-identity:#8052ff;
   --cat-contact:#ffb829;
@@ -224,22 +240,30 @@ main{ position:relative; z-index:10; overflow-x:clip; }
   transition:opacity .4s ease;
 }
 .facehint.hide{ opacity:0; }
+/* laptop: sits above the bottom readouts, on a black backing over the face */
+@media (min-width:1024px){ .facehint{ bottom:34px; background:var(--void); padding:2px 6px; } }
 @media (max-width:1023px){
   .facewrap{ margin-bottom:24px; }
   .facehint{ bottom:-24px; }
 }
 .facewrap:focus-visible{ outline:2px solid var(--spark); outline-offset:3px; }
 
-/* leader labels on wide monitors */
-.leaders{ position:absolute; inset:0; pointer-events:none; }
-.leaders text{ font-size:12px; font-weight:600; letter-spacing:.025em; fill:var(--ash); }
-.leaders text.act{ fill:var(--spark); }
-.leaders line{ stroke:rgba(255,255,255,.22); stroke-width:1; }
-.leaders line.act{ stroke:var(--spark); }
-
 .home-side{ display:flex; flex-direction:column; gap:24px; min-height:0; padding:30px 0 0; }
 @media (min-width:1024px){ .home-side{ padding:24px 0; } }
-.casepanel{ display:flex; flex-direction:column; gap:12px; }
+/* CASE FILE box (DESIGN.md 6.7) — the only bordered element, home screen only */
+.casefile{ position:relative; border:1px solid var(--hud-line); flex:none; }
+.casefile .cm{ position:absolute; width:6px; height:6px; border:1px solid var(--hud-line-strong); background:var(--void); }
+.casefile .tl{ top:-4px; left:-4px; } .casefile .tr{ top:-4px; right:-4px; }
+.casefile .bl{ bottom:-4px; left:-4px; } .casefile .br{ bottom:-4px; right:-4px; }
+.cf-bar{
+  height:28px; display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:0 12px; border-bottom:1px solid var(--hud-line);
+  font-family:var(--font-mono); font-size:var(--text-hud); font-weight:500; letter-spacing:.04em; line-height:1;
+  color:var(--hud-label); font-variant-numeric:tabular-nums;
+}
+#cf-code.flash{ animation:cfflash .4s linear; }
+@keyframes cfflash{ 0%,100%{ color:var(--hud-label); } 15%,85%{ color:var(--spark); } }
+.casepanel{ display:flex; flex-direction:column; gap:12px; padding:18px; }
 .casepanel .nm{ font-size:clamp(34px,9.5vw,48px); font-weight:400; line-height:1.1; letter-spacing:-.04em; color:var(--white); }
 @media (min-width:1024px){ .casepanel .nm{ font-size:36px; } }
 .casepanel .scale{ font-size:28px; font-weight:400; color:var(--spark); letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
@@ -252,21 +276,24 @@ main{ position:relative; z-index:10; overflow-x:clip; }
 .caselist{ display:flex; flex-direction:column; min-height:0; overflow:auto; scrollbar-width:thin; padding-right:12px; }
 .caselist > .lab{ margin-bottom:9px; }
 .caselist button{
-  display:grid; grid-template-columns:52px minmax(0,1fr) auto; gap:12px; align-items:baseline;
+  display:grid; grid-template-columns:62px minmax(0,1fr) auto; gap:12px; align-items:baseline;
   width:100%; text-align:left; padding:7px 0; color:var(--ash);
   transition:color .2s ease;
 }
-.caselist button .yr{ font-size:12px; font-variant-numeric:tabular-nums; }
+.caselist button .yr{ font-family:var(--font-mono); font-size:var(--text-hud); font-weight:400; letter-spacing:.04em; color:var(--ash); font-variant-numeric:tabular-nums; }
 .caselist button .nm{ font-size:15px; font-weight:400; }
 .caselist button .sz{ font-size:11px; white-space:nowrap; font-variant-numeric:tabular-nums; }
 .caselist button:hover{ color:var(--mist); }
 .caselist button:hover .nm{ color:var(--white); }
 .caselist button[aria-current="true"] .nm{ color:var(--white); }
-.caselist button[aria-current="true"] .sz{ color:var(--spark); }
-@media (max-height:820px) and (min-width:1024px){
-  .home-side{ gap:18px; }
-  .casepanel{ gap:9px; }
-  .caselist button{ padding:3px 0; }
+.caselist button[aria-current="true"] .sz,
+.caselist button[aria-current="true"] .yr{ color:var(--spark); }
+@media (max-height:920px) and (min-width:1024px){
+  .home-side{ gap:14px; }
+  .casepanel{ gap:6px; padding:12px 18px; }
+  .casepanel .nm{ font-size:30px; }
+  .casepanel .scale{ font-size:24px; }
+  .caselist button{ padding:2px 0; }
   .casepanel .cause{ display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
 }
 
@@ -586,15 +613,18 @@ body.dragging{ -webkit-user-select:none; user-select:none; cursor:grabbing; }
       <p class="cap">약 2분 30초 · 서버로 아무것도 보내지 않습니다</p>
     </div>
 
-    <div class="facewrap" id="facewrap" tabindex="0" role="img"
-         aria-label="국내 개인정보 유출 사고 9건의 조각으로 그린 정면 얼굴. 방향키로 사례를 넘기거나 오른쪽 사례 목록을 쓰세요.">
-      <canvas id="face"></canvas>
-      <svg class="leaders" id="leaders" aria-hidden="true"></svg>
+    <div class="facewrap" id="facewrap" tabindex="0" role="group"
+         aria-label="국내 개인정보 유출 사고 9건의 조각으로 그린 정면 얼굴 분석 화면. 방향키로 확대 창을 14픽셀씩 옮기고, Enter로 그 자리의 사례를 사례 기록에 고정합니다. 오른쪽 사례 목록으로도 같은 정보를 볼 수 있습니다.">
+      <canvas id="face" aria-hidden="true"></canvas>
       <p class="facehint" id="facehint">얼굴 위로 마우스를 움직여 보세요</p>
     </div>
 
     <div class="home-side">
-      <div class="casepanel" id="casepanel" aria-live="polite"></div>
+      <section class="casefile" aria-label="사례 기록">
+        <i class="cm tl"></i><i class="cm tr"></i><i class="cm bl"></i><i class="cm br"></i>
+        <div class="cf-bar" aria-hidden="true"><span>CASE FILE</span><span id="cf-code">NO SIGNAL</span></div>
+        <div class="casepanel" id="casepanel" aria-live="polite"></div>
+      </section>
       <div class="caselist">
         <p class="lab">사례 9건</p>
         <div id="caselist" role="list"></div>
@@ -1176,11 +1206,47 @@ const Face = (function(){
     built = scale;
   }
 
-  /* ---------- rendering ---------- */
+  /* ---------- rendering — analysis HUD (DESIGN.md 7.1) ----------
+     Layers, bottom to top:
+       bg    glow + coordinate grid + ticks + centre crosshair   (cached per size)
+       face  the grey collage, unmoving                          (cached per size)
+       live  analysis-mode ramp, case annotations, magnifier inset, corner readouts */
   const cv = $('#face'), cx = cv.getContext('2d');
   let W = 0, H = 0, DPR = 1, BW = 0, BH = 0, OX = 0, OY = 0;
-  let mouse = { x:-9, y:-9, on:false }, lastMove = performance.now(), t0 = performance.now();
-  let active = -1, onActive = null;
+  let mouse = { x:-9, y:-9, on:false, touch:false }, lastMove = performance.now(), t0 = performance.now();
+  let active = -1, onActive = null, onMove = null, onScan = null, scanning = false;
+  let bgLayer = null, faceLayer = null, centres = [];
+  let byCase = [];                                   // fragment + doc lists per case, for the ramp
+
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const TOK = {};
+  function readTokens(){
+    for (const k of ['--hud-line', '--hud-line-strong', '--hud-label', '--hud-grid', '--glow',
+                     '--ramp-low', '--ramp-mid', '--ramp-high', '--ash', '--spark', '--white', '--void'])
+      TOK[k] = css(k);
+  }
+  const MONO = "'IBM Plex Mono', 'IBM Plex Sans KR', ui-monospace, monospace";
+  const KO = "'IBM Plex Sans KR', Inter, sans-serif";
+  const ZOOM = 3;                                    // --inset-zoom
+  const insetSize = () => LAP() ? 168 : 132;         // --inset-size (mobile 132)
+
+  /* #LEAK-연도-월, -B on a repeated month (DESIGN.md 6.7) */
+  const CODES = (() => {
+    const seen = {};
+    return CASES.map(c => {
+      const k = `${c.when.slice(0, 4)}-${String(c.when.match(/(\d+)월/)[1]).padStart(2, '0')}`;
+      seen[k] = (seen[k] || 0) + 1;
+      return `#LEAK-${k}${seen[k] > 1 ? '-B' : ''}`;
+    });
+  })();
+
+  /* L -> ramp colour: Iris (dark) -> pink (mid) -> Spark (bright), 7.1.6 */
+  const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  function rampOf(L){
+    const lo = hex(TOK['--ramp-low']), mid = hex(TOK['--ramp-mid']), hi = hex(TOK['--ramp-high']);
+    const [a, b, t] = L < .5 ? [lo, mid, L / .5] : [mid, hi, (L - .5) / .5];
+    return `rgb(${a.map((v, i) => Math.round(mix(v, b[i], t))).join(',')})`;
+  }
 
   function resize(){
     const r = cv.parentElement.getBoundingClientRect();
@@ -1192,115 +1258,366 @@ const Face = (function(){
     BH = H; BW = BH * ASPECT;
     if (BW > W){ BW = W; BH = BW / ASPECT; }
     OX = (W - BW) / 2; OY = (H - BH) / 2;
+    readTokens();
     const want = LAP() ? 1 : 1.5;
-    if (built !== want) build(want);
+    if (built !== want){
+      build(want);
+      for (const f of frags) f.ramp = rampOf(f.L);
+      for (const d of docs) d.ramp = rampOf(d.L);
+      byCase = CASES.map((_, i) => ({ f:frags.filter(f => f.c === i), d:docs.filter(d => d.c === i) }));
+      centres = CASES.map((_, i) => {           // median of the case's fragments = its marker
+        const xs = byCase[i].f.map(f => f.x + f.w / 2).sort((a, z) => a - z);
+        const ys = byCase[i].f.map(f => f.y + f.h / 2).sort((a, z) => a - z);
+        return xs.length ? [xs[xs.length >> 1], ys[ys.length >> 1]] : null;
+      });
+    }
+    renderLayers();
   }
 
   const toPx = (nx, ny) => [OX + nx * BW, OY + ny * BH];
   const gray = L => { const g = Math.round(18 + L * 222); return `rgb(${g},${g},${g})`; };
+  const layer = () => { const c = document.createElement('canvas'); c.width = W * DPR; c.height = H * DPR;
+                        const g = c.getContext('2d'); g.setTransform(DPR, 0, 0, DPR, 0, 0); return [c, g]; };
 
-  function lensPoint(){
-    if (mouse.on) return mouse;
-    if (RM.matches) return null;
-    if (performance.now() - lastMove < 4000) return null;        // H-6: idle drift
-    const t = (performance.now() - t0) / 1000;
-    return { x:OX + BW * (.5 + .30 * Math.sin(t * .37)), y:OY + BH * (.42 + .26 * Math.sin(t * .53 + 1.1)) };
+  function renderLayers(){
+    /* bg: glow (7.1.2), grid + ticks + crosshair (7.1.3) */
+    const [bc, b] = layer();
+    const [gx, gy] = toPx(.5, .42);
+    const glow = b.createRadialGradient(gx, gy, 0, gx, gy, BH * .62);
+    glow.addColorStop(0, TOK['--glow']); glow.addColorStop(1, 'rgba(255,255,255,0)');
+    b.fillStyle = glow; b.fillRect(0, 0, W, H);
+    b.strokeStyle = TOK['--hud-grid']; b.lineWidth = 1;
+    b.beginPath();
+    for (let x = 48; x < W; x += 48){ b.moveTo(Math.round(x) + .5, 0); b.lineTo(Math.round(x) + .5, H); }
+    for (let y = 48; y < H; y += 48){ b.moveTo(0, Math.round(y) + .5); b.lineTo(W, Math.round(y) + .5); }
+    b.stroke();
+    b.font = `400 10px ${MONO}`; b.fillStyle = TOK['--ash']; b.textBaseline = 'top';
+    for (let x = 96; x < W - 40; x += 96) b.fillText(String(Math.round(x / W * 1000)), x + 3, 28);
+    for (let y = 96; y < H - 40; y += 96) b.fillText(String(Math.round(y / H * 1000)), 3, y + 3);
+    const [fx, fy] = toPx(.5, .40);
+    b.beginPath();
+    b.moveTo(Math.round(fx - 24), Math.round(fy) + .5); b.lineTo(Math.round(fx + 24), Math.round(fy) + .5);
+    b.moveTo(Math.round(fx) + .5, Math.round(fy - 24)); b.lineTo(Math.round(fx) + .5, Math.round(fy + 24));
+    b.stroke();
+    bgLayer = bc;
+
+    /* face: the collage itself, which never moves (7.1.1) */
+    const [fc, f] = layer();
+    const photo = f.createLinearGradient(0, OY, 0, OY + BH);
+    photo.addColorStop(0, '#a9bccb'); photo.addColorStop(.55, '#4a5f72'); photo.addColorStop(1, '#1b232b');
+    for (const p of frags){
+      const [x, y] = toPx(p.x, p.y);
+      f.fillStyle = p.photo ? photo : gray(p.L);
+      f.fillRect(x, y, p.w * BW, p.h * BH);
+    }
+    for (const d of docs) docShape(f, d, ...toPx(d.x, d.y), d.w * BW, d.h * BH, gray(d.L));
+    faceLayer = fc;
   }
 
+  function docShape(g, d, X, Y, w, h, fill){
+    g.fillStyle = fill; g.fillRect(X, Y, w, h);
+    g.globalAlpha = .3; g.fillStyle = d.L > .5 ? '#111' : '#ddd';
+    const lh = h / (d.lines + 1.6);
+    for (let i = 0; i < d.lines; i++)
+      g.fillRect(X + w * .1, Y + lh * (i + .8), w * (i === d.lines - 1 ? .45 : .8), Math.max(.7, lh * .14));
+    g.globalAlpha = 1;
+  }
+
+  /* ---------- state that eases between frames ---------- */
+  let cur = -1, curA = 0, prev = -1, prevA = 0;      // analysis-mode crossfade, 0.3s (7.1.6)
+  let inset = null, insetA = 0, lastSrc = null;      // inset centre, opacity, last source point
+  let tPrev = performance.now();
+
+  function lensPoint(){
+    const quiet = performance.now() - lastMove;
+    /* pointer, touch and keyboard hold their spot; a list pick parks for 4s, then scanning resumes */
+    if (mouse.on && (mouse.src !== 'list' || quiet < 4000 || RM.matches)) return { x:mouse.x, y:mouse.y, user:true };
+    if (RM.matches) return null;
+    if (quiet < 4000) return null;                                // 7.1.8: idle scan after 4s
+    const t = (performance.now() - t0) / 1000;
+    return { x:OX + BW * (.5 + .26 * Math.sin(t * .37)), y:OY + BH * (.42 + .24 * Math.sin(t * .53 + 1.1)), user:false };
+  }
+  const onFace = p => p && lum((p.x - OX) / BW, (p.y - OY) / BH) !== null;
+
+  /* Inset placement (7.1.4): sideways, away from the face centre, 120px clear of the cursor;
+     on touch, 150px above the finger. Pushed back inside the area; flips if it would cover the source. */
+  function insetTarget(p, S, src){
+    const half = S / 2, faceX = OX + BW / 2;
+    const fit = (x, y) => [clamp(x, half + 6, W - half - 6), clamp(y, half + 6, H - half - 30)];
+    const hitsSrc = ([x, y]) => Math.abs(x - p.x) < half + src / 2 + 8 && Math.abs(y - p.y) < half + src / 2 + 8;
+    if (mouse.touch && mouse.on) return fit(p.x, p.y - 150);
+    const side = p.x < faceX ? -1 : 1;
+    for (const s of [side, -side]){
+      const c = fit(p.x + s * (120 + half), p.y);
+      if (!hitsSrc(c)) return c;
+    }
+    const up = fit(p.x, p.y - 120 - half);
+    return hitsSrc(up) ? fit(p.x, p.y + 120 + half) : up;
+  }
+
+  /* HUD text helpers: mono 11px / 500 / .04em, optional black backing for legibility */
+  function mono(text, x, y, col, align = 'left', size = 11, back = false){
+    cx.font = `500 ${size}px ${MONO}`; cx.textBaseline = 'alphabetic'; cx.textAlign = align;
+    if ('letterSpacing' in cx) cx.letterSpacing = '0.04em';
+    if (back){
+      const w = cx.measureText(text).width, x0 = align === 'right' ? x - w : x;
+      cx.fillStyle = TOK['--void']; cx.fillRect(x0 - 3, y - size, w + 6, size + 4);
+    }
+    cx.fillStyle = col; cx.fillText(text, x, y);
+    if ('letterSpacing' in cx) cx.letterSpacing = '0px';
+    cx.textAlign = 'left';
+  }
+  /* key Ash, value --hud-label (7.1.7) */
+  function readout(parts, x, y, align){
+    cx.font = `500 11px ${MONO}`;
+    if ('letterSpacing' in cx) cx.letterSpacing = '0.04em';
+    const widths = parts.map(([t]) => cx.measureText(t).width);
+    let X = align === 'right' ? x - widths.reduce((a, b) => a + b, 0) : x;
+    cx.textBaseline = 'alphabetic'; cx.textAlign = 'left';
+    parts.forEach(([t, k], i) => { cx.fillStyle = k ? TOK['--ash'] : TOK['--hud-label']; cx.fillText(t, X, y); X += widths[i]; });
+    if ('letterSpacing' in cx) cx.letterSpacing = '0px';
+  }
+  const marker = (x, y, s, col) => {
+    cx.strokeStyle = col; cx.lineWidth = 1;
+    const X = Math.round(x - s / 2) + .5, Y = Math.round(y - s / 2) + .5;
+    cx.fillStyle = TOK['--void']; cx.fillRect(X, Y, s, s); cx.strokeRect(X, Y, s, s);
+  };
+  const coord = p => `X ${String(Math.round(clamp(p.x / W, 0, 1) * 1000)).padStart(4, '0')} · Y ${String(Math.round(clamp(p.y / H, 0, 1) * 1000)).padStart(4, '0')}`;
+
+  let clock = '', clockMin = -1;
+  function localTime(){
+    const d = new Date();
+    if (d.getMinutes() !== clockMin){                // refresh once a minute (7.1.7)
+      clockMin = d.getMinutes();
+      const off = -d.getTimezoneOffset() / 60;
+      const zone = off === 9 ? 'KST' : `GMT${off >= 0 ? '+' : ''}${off}`;
+      clock = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')} ${zone}`;
+    }
+    return clock;
+  }
+
+  /* ---------- the frame ---------- */
   function draw(){
     /* the face is only on the home screen — don't spend frames on it elsewhere */
     if (S.screen !== 'home'){ requestAnimationFrame(draw); return; }
+    const now = performance.now(), dt = Math.min(64, now - tPrev); tPrev = now;
+    const instant = RM.matches;
     cx.clearRect(0, 0, W, H);
-    const s = BW / 400;
-    const R = 80 * s * 1.9, MAG = 3.6;
-    const L = lensPoint();
-    const photo = cx.createLinearGradient(0, OY, 0, OY + BH);
-    photo.addColorStop(0, '#a9bccb'); photo.addColorStop(.55, '#4a5f72'); photo.addColorStop(1, '#1b232b');
+    if (bgLayer) cx.drawImage(bgLayer, 0, 0, W, H);
 
-    /* which case is under the lens */
-    let hit = -1;
-    if (L){
-      const nx = (L.x - OX) / BW, ny = (L.y - OY) / BH;
-      if (lum(nx, ny) !== null) hit = caseAt(nx, ny);
-    }
+    const L = lensPoint();
+    const nowScanning = !!L && !L.user;
+    if (nowScanning && !scanning) onScan && onScan();          // 7.1.8: the CASE FILE follows the scan
+    scanning = nowScanning;
+    const on = onFace(L);
+    const hit = on ? caseAt((L.x - OX) / BW, (L.y - OY) / BH) : -1;
     if (hit !== active){ active = hit; onActive && onActive(active); }
 
-    const drawOne = (f, isDoc) => {
-      const [px, py] = toPx(f.x, f.y);
-      const w = f.w * BW, h = f.h * BH;
-      let X = px, Y = py, k = 1;
-      if (L){
-        const dx = px + w / 2 - L.x, dy = py + h / 2 - L.y;
-        const d = Math.hypot(dx, dy);
-        if (d < R){
-          const t = 1 - (d / R) * (d / R);
-          k = 1 + (MAG - 1) * t * t;
-          const push = 1 + (k - 1) * .45;
-          X = L.x + dx * push - w * k / 2;
-          Y = L.y + dy * push - h * k / 2;
-        }
-      }
-      const w2 = w * k, h2 = h * k;
-      if (X + w2 < 0 || X > W || Y + h2 < 0 || Y > H) return;
+    /* analysis-mode crossfade */
+    if (hit !== cur){ if (cur >= 0){ prev = cur; prevA = curA; } cur = hit; curA = 0; }
+    const step = instant ? 1 : dt / 300;
+    curA = cur >= 0 ? Math.min(1, curA + step) : 0;
+    prevA = Math.max(0, prevA - step); if (instant) prevA = 0;
 
-      const dim = (active >= 0 && f.c !== active) ? .84 : 1;
-      cx.globalAlpha = dim;
-      cx.fillStyle = (!isDoc && f.photo) ? photo : gray(f.L);
-      cx.fillRect(X, Y, w2, h2);
-
-      if (isDoc){
-        cx.globalAlpha = .3 * dim;
-        cx.fillStyle = f.L > .5 ? '#111' : '#ddd';
-        const lh = h2 / (f.lines + 1.6);
-        for (let i = 0; i < f.lines; i++)
-          cx.fillRect(X + w2 * .10, Y + lh * (i + .8), w2 * (i === f.lines - 1 ? .45 : .80), Math.max(.7, lh * .14));
-        cx.globalAlpha = dim;
-      }
-
-      if (active >= 0 && f.c === active){
-        cx.strokeStyle = '#ffb829'; cx.lineWidth = Math.min(1.2, Math.max(.5, k * .4));
-        cx.strokeRect(X + .5, Y + .5, w2 - 1, h2 - 1);
-      }
-
-      /* H-2: readable at magnification */
-      if (k >= 1.3 && h2 >= 7){
-        const C = CASES[f.c];
-        const fs = Math.min(h2 * .40, w2 * .14);
-        if (fs >= 4.6){
-          cx.globalAlpha = Math.min(1, (k - 1.3) / .7) * dim;
-          cx.fillStyle = f.L > .5 ? '#0a0a0a' : '#f2f2f2';
-          cx.font = `600 ${fs}px Inter, sans-serif`;
-          cx.textBaseline = 'top';
-          const yr = C.when.slice(0, 5).replace('년', '');
-          cx.fillText(`${yr} ${C.name}`, X + w2 * .07, Y + h2 * .14);
-          cx.font = `200 ${fs * .92}px Inter, 'IBM Plex Sans KR', sans-serif`;
-          cx.fillText(C.items[0], X + w2 * .07, Y + h2 * .56);
-          cx.globalAlpha = dim;
-        }
-      }
-    };
-
-    for (const f of frags) drawOne(f, false);
-    for (const d of docs) drawOne(d, true);
+    /* the collage: the other cases recede to .84 while one is analysed */
+    const recede = .16 * Math.max(cur >= 0 ? curA : 0, prevA);
+    cx.globalAlpha = 1 - recede;
+    if (faceLayer) cx.drawImage(faceLayer, 0, 0, W, H);
     cx.globalAlpha = 1;
+    for (const [ci, a] of [[prev, prevA], [cur, curA]]){
+      if (ci < 0 || a <= 0) continue;
+      paintCase(ci, a, null);
+    }
+
+    annotations();
+
+    /* corner readouts (7.1.7) — nothing invented */
+    const m = 12;
+    readout([['SUBJECT ', 1], ['01 · FRONT', 0]], m, m + 11);
+    readout([['LOCAL TIME ', 1], [localTime(), 0]], W - m, m + 11, 'right');
+    readout([['CASES ', 1], [String(CASES.length).padStart(2, '0'), 0], [' · FRAGMENTS ', 1], [kn(frags.length + docs.length), 0]], m, H - m);
+    if (L && L.user) readout([[coord(L), 0]], W - m, H - m, 'right');
+    else if (L) readout([['SCANNING', 1]], W - m, H - m, 'right');
+    else readout([['X ---- · Y ----', 1]], W - m, H - m, 'right');
+
+    /* inset: follows at 25% a frame, fades over 0.2s off the face */
+    const size = insetSize(), src = size / ZOOM;
+    if (on) lastSrc = { x:L.x, y:L.y };
+    insetA = on ? Math.min(1, insetA + (instant ? 1 : dt / 200)) : Math.max(0, insetA - (instant ? 1 : dt / 200));
+    if (lastSrc && insetA > 0){
+      const [tx, ty] = insetTarget(lastSrc, size, src);
+      if (!inset || instant) inset = { x:tx, y:ty };
+      else { inset.x += (tx - inset.x) * .25; inset.y += (ty - inset.y) * .25; }
+      cx.globalAlpha = insetA;
+      drawInset(lastSrc, size, src);
+      cx.globalAlpha = 1;
+    } else if (!on) inset = null;
+
     requestAnimationFrame(draw);
   }
 
-  /* ---------- input ---------- */
+  /* One case recoloured by the ramp at .85 over its grey (7.1.6); optional zoom transform. */
+  function paintCase(ci, a, Z){
+    const set = byCase[ci];
+    for (const f of set.f) rampFrag(f, false, a, Z);
+    for (const d of set.d) rampFrag(d, true, a, Z);
+  }
+  function rampFrag(f, isDoc, a, Z){
+    let [X, Y] = toPx(f.x, f.y), w = f.w * BW, h = f.h * BH;
+    if (Z){ X = Z.cx + (X - Z.sx) * ZOOM; Y = Z.cy + (Y - Z.sy) * ZOOM; w *= ZOOM; h *= ZOOM;
+            if (X + w < Z.r.x || X > Z.r.x + Z.r.w || Y + h < Z.r.y || Y > Z.r.y + Z.r.h) return; }
+    cx.globalAlpha = a;
+    cx.fillStyle = gray(f.L); cx.fillRect(X, Y, w, h);
+    cx.globalAlpha = a * .85;
+    cx.fillStyle = f.ramp; cx.fillRect(X, Y, w, h);
+    cx.globalAlpha = 1;
+  }
+
+  /* 7.1.5 — markers, 45° then horizontal leaders, two-line labels 42px apart.
+     All nine when there is a gutter beside the face; otherwise only the active one. */
+  function annotations(){
+    const gutter = (W - BW) / 2;
+    const all = gutter >= 130;
+    centres.forEach((c, i) => {
+      if (!c) return;
+      const [x, y] = toPx(c[0], c[1]);
+      marker(x, y, 6, i === active ? TOK['--spark'] : TOK['--hud-line']);
+    });
+    const list = CASES.map((_, i) => i).filter(i => centres[i] && (all || i === active));
+    const sides = { l:[], r:[] };
+    list.forEach(i => { const [x, y] = toPx(...centres[i]); sides[x < W / 2 ? 'l' : 'r'].push({ i, x, y }); });
+    for (const k of ['l', 'r']){
+      const arr = sides[k].sort((a, z) => a.y - z.y);
+      let last = -1e9;
+      for (const o of arr){
+        const ly = clamp(Math.max(o.y, last + 42), 48, H - 52); last = ly;
+        const edge = all ? (k === 'l' ? gutter - 10 : W - gutter + 10) : (k === 'l' ? 12 : W - 12);
+        const dir = k === 'l' ? -1 : 1;
+        const dx = Math.min(Math.abs(ly - o.y), Math.abs(edge - o.x));
+        const on = o.i === active;
+        cx.strokeStyle = on ? TOK['--spark'] : TOK['--hud-line']; cx.lineWidth = 1;
+        cx.beginPath(); cx.moveTo(o.x + dir * 3, o.y);
+        cx.lineTo(o.x + dir * dx, ly); cx.lineTo(edge, ly); cx.stroke();
+        const C = CASES[o.i], align = k === 'l' ? (all ? 'right' : 'left') : (all ? 'left' : 'right');
+        const tx = all ? edge + dir * 4 : edge;
+        mono(CODES[o.i], tx, ly - 5, on ? TOK['--spark'] : TOK['--hud-label'], align, 11, !all);
+        cx.font = `400 12px ${KO}`; cx.textAlign = align; cx.textBaseline = 'alphabetic';
+        const t2 = `${C.name} ${kn(C.n / 10000)}만 ${C.unit}`;
+        if (!all){ const w2 = cx.measureText(t2).width; cx.fillStyle = TOK['--void'];
+                   cx.fillRect((align === 'right' ? tx - w2 : tx) - 3, ly + 2, w2 + 6, 16); }
+        cx.fillStyle = on ? TOK['--white'] : TOK['--ash'];
+        cx.fillText(t2, tx, ly + 14);
+        cx.textAlign = 'left';
+      }
+    }
+  }
+
+  /* 7.1.4 — source square, leader, zoomed re-render, crosshair, corner markers, labels */
+  function drawInset(p, S, src){
+    const r = { x:inset.x - S / 2, y:inset.y - S / 2, w:S, h:S };
+    const s = { x:p.x - src / 2, y:p.y - src / 2, w:src, h:src };
+    const R = n => Math.round(n) + .5;
+
+    cx.strokeStyle = TOK['--hud-line-strong']; cx.lineWidth = 1;
+    cx.strokeRect(R(s.x), R(s.y), Math.round(s.w), Math.round(s.h));
+    /* leader: nearest corner to nearest corner */
+    const cs = [[s.x, s.y], [s.x + s.w, s.y], [s.x, s.y + s.h], [s.x + s.w, s.y + s.h]];
+    const ci = [[r.x, r.y], [r.x + r.w, r.y], [r.x, r.y + r.h], [r.x + r.w, r.y + r.h]];
+    let best = null, bd = Infinity;
+    for (const a of cs) for (const b of ci){ const d = Math.hypot(a[0] - b[0], a[1] - b[1]); if (d < bd){ bd = d; best = [a, b]; } }
+    cx.strokeStyle = TOK['--hud-line'];
+    cx.beginPath(); cx.moveTo(best[0][0], best[0][1]); cx.lineTo(best[1][0], best[1][1]); cx.stroke();
+
+    /* zoomed re-render: the source area drawn again at ×3, so the text is sharp */
+    cx.save();
+    cx.beginPath(); cx.rect(r.x, r.y, r.w, r.h); cx.clip();
+    cx.fillStyle = TOK['--void']; cx.fillRect(r.x, r.y, r.w, r.h);
+    const Z = { cx:inset.x, cy:inset.y, sx:p.x, sy:p.y, r };
+    const photo = cx.createLinearGradient(0, r.y - (p.y - OY) * ZOOM, 0, r.y + (OY + BH - p.y) * ZOOM);
+    photo.addColorStop(0, '#a9bccb'); photo.addColorStop(.55, '#4a5f72'); photo.addColorStop(1, '#1b232b');
+    const a0 = cx.globalAlpha;
+    for (const f of frags) zoomFrag(f, false, Z, photo);
+    for (const d of docs) zoomFrag(d, true, Z, photo);
+    cx.globalAlpha = a0;
+    cx.strokeStyle = TOK['--hud-line-strong']; cx.lineWidth = 1;
+    for (const rad of [18, 6]){ cx.beginPath(); cx.arc(inset.x, inset.y, rad, 0, Math.PI * 2); cx.stroke(); }
+    cx.restore();
+
+    cx.strokeStyle = TOK['--hud-line-strong'];
+    cx.strokeRect(R(r.x), R(r.y), Math.round(r.w) - 1, Math.round(r.h) - 1);
+    for (const [x, y] of ci) marker(x, y, 8, TOK['--hud-line-strong']);    // 4px outside each corner
+
+    const C = active >= 0 ? active : null;
+    if (C !== null) mono(CODES[C], r.x + r.w, r.y - 8, TOK['--hud-label'], 'right', 11, true);
+    mono(coord(p), r.x, r.y + r.h + 18, TOK['--ash'], 'left', 11, true);
+  }
+
+  function zoomFrag(f, isDoc, Z, photo){
+    let [X, Y] = toPx(f.x, f.y);
+    X = Z.cx + (X - Z.sx) * ZOOM; Y = Z.cy + (Y - Z.sy) * ZOOM;
+    const w = f.w * BW * ZOOM, h = f.h * BH * ZOOM;
+    if (X + w < Z.r.x || X > Z.r.x + Z.r.w || Y + h < Z.r.y || Y > Z.r.y + Z.r.h) return;
+    const ramp = f.c === cur ? curA : 0;           // analysis mode, under the text
+    if (isDoc){
+      docShape(cx, f, X, Y, w, h, gray(f.L));
+      if (ramp){ const a0 = cx.globalAlpha; cx.globalAlpha = a0 * ramp * .85; cx.fillStyle = f.ramp; cx.fillRect(X, Y, w, h); cx.globalAlpha = a0;
+                 docShape(cx, f, X, Y, w, h, 'rgba(0,0,0,0)'); }            // text lines back on top
+      return;
+    }
+    cx.fillStyle = f.photo ? photo : gray(f.L);
+    cx.fillRect(X, Y, w, h);
+    if (ramp){ const a0 = cx.globalAlpha; cx.globalAlpha = a0 * ramp * .85; cx.fillStyle = f.ramp; cx.fillRect(X, Y, w, h); cx.globalAlpha = a0; }
+    /* "연도 사례명 / 유출 항목", or plain text lines below 7px (7.1.4) */
+    const fs = h * .42, ink = (ramp ? .45 + f.L * .5 : f.L) > .5 ? '#0a0a0a' : '#f2f2f2';
+    if (fs >= 7){
+      const C = CASES[f.c];
+      cx.save(); cx.beginPath(); cx.rect(X, Y, w, h); cx.clip();
+      cx.fillStyle = ink; cx.textBaseline = 'top';
+      cx.font = `600 ${fs}px ${KO}`;
+      cx.fillText(`${C.when.slice(0, 4)} ${C.name}`, X + 3, Y + h * .1);
+      cx.font = `400 ${fs * .92}px ${KO}`;
+      cx.fillText(C.items[Math.floor(f.t * C.items.length)], X + 3, Y + h * .52);
+      cx.restore();
+    } else if (h > 6){
+      const a0 = cx.globalAlpha;
+      cx.globalAlpha = a0 * .35; cx.fillStyle = ink;
+      cx.fillRect(X + w * .1, Y + h * .3, w * .7, Math.max(.8, h * .12));
+      cx.fillRect(X + w * .1, Y + h * .62, w * .45, Math.max(.8, h * .12));
+      cx.globalAlpha = a0;
+    }
+  }
+
+  /* ---------- input (7.1.9) ---------- */
   function setMouse(e){
     const r = cv.getBoundingClientRect();
-    mouse = { x:e.clientX - r.left, y:e.clientY - r.top, on:true };
+    mouse = { x:e.clientX - r.left, y:e.clientY - r.top, on:true, touch:e.pointerType !== 'mouse', src:e.pointerType === 'mouse' ? 'mouse' : 'touch' };
+    lastMove = performance.now();
+    $('#facehint').classList.add('hide');
+    onMove && onMove();
+  }
+  cv.addEventListener('pointermove', setMouse);
+  cv.addEventListener('pointerdown', e => { setMouse(e); try{ cv.setPointerCapture(e.pointerId); }catch(_){} });
+  /* mouse: leaving the area hides the inset; touch: the inset stays where the finger lifted */
+  cv.addEventListener('pointerleave', e => {
+    if (e.pointerType === 'mouse'){ mouse.on = false; lastMove = performance.now(); }
+  });
+
+  /* any input anywhere on the page postpones the idle scan (7.1.8) */
+  for (const t of ['pointermove', 'pointerdown', 'keydown', 'wheel'])
+    addEventListener(t, () => { if (S.screen === 'home') lastMove = performance.now(); }, { passive:true });
+
+  /* list / keyboard: put the inset on a case's marker */
+  function focusCase(i){
+    const c = centres[i] || CASES[i].seed;
+    const [x, y] = toPx(c[0], c[1]);
+    mouse = { x, y, on:true, touch:false, src:'list' };
     lastMove = performance.now();
     $('#facehint').classList.add('hide');
   }
-  cv.addEventListener('pointermove', setMouse);
-  cv.addEventListener('pointerdown', e => { setMouse(e); cv.setPointerCapture(e.pointerId); });
-  cv.addEventListener('pointerleave', () => { mouse.on = false; lastMove = performance.now(); });
-
-  /* Keyboard / list focus: park the lens on a case seed (H-5, 접근성) */
-  function focusCase(i){
-    const [x, y] = toPx(CASES[i].seed[0], CASES[i].seed[1]);
-    mouse = { x, y, on:true };
+  /* keyboard: 14px a press, starting from the face centre */
+  function nudge(dx, dy){
+    if (!mouse.on || mouse.src === 'list' && performance.now() - lastMove >= 4000){ const [x, y] = toPx(.5, .42); mouse = { x, y }; }
+    mouse = { x:clamp(mouse.x + dx * 14, 0, W), y:clamp(mouse.y + dy * 14, 0, H), on:true, touch:false, src:'key' };
     lastMove = performance.now();
     $('#facehint').classList.add('hide');
   }
@@ -1311,17 +1628,15 @@ const Face = (function(){
       if (matchMedia('(hover: none)').matches)
         $('#facehint').textContent = '얼굴을 손가락으로 문질러 보세요';
       resize(); addEventListener('resize', resize); requestAnimationFrame(draw);
+      /* tick numbers and labels are mono: redraw the cached layer once the face has loaded */
+      document.fonts && document.fonts.ready.then(() => { if (W) renderLayers(); });
     },
-    focusCase,
-    resize,
+    focusCase, nudge, resize,
+    code:i => CODES[i],
     get active(){ return active; },
     onActive(fn){ onActive = fn; },
-    centroid(i){
-      let sx = 0, sy = 0, n = 0;
-      for (const f of frags) if (f.c === i){ sx += f.x; sy += f.y; n++; }
-      return n ? [OX + (sx / n) * BW, OY + (sy / n) * BH] : null;
-    },
-    box(){ return { OX, OY, BW, BH, W, H }; }
+    onMove(fn){ onMove = fn; },
+    onScan(fn){ onScan = fn; }
   };
 })();
 </script>
@@ -1375,8 +1690,17 @@ $('#snd').onclick = e => {
 /* ============================================================
    Home — case panel, list, leader labels (PRD 7.1)
    ============================================================ */
+/* CASE FILE box (DESIGN.md 6.7). i < 0 = NO SIGNAL. */
 function renderCase(i){
+  const code = $('#cf-code');
+  if (i < 0){
+    code.textContent = 'NO SIGNAL';
+    $('#casepanel').innerHTML = `<p class="cause">얼굴 위를 움직이거나 아래 목록에서 사례를 고르면, 그 자리를 이룬 유출 기록이 여기에 뜹니다.</p>`;
+    return;
+  }
   const c = CASES[i];
+  code.textContent = Face.code(i);
+  if (!RM.matches){ code.classList.remove('flash'); void code.offsetWidth; code.classList.add('flash'); }
   $('#casepanel').innerHTML = `
     <p class="lab">${c.when}</p>
     <p class="nm">${c.name}</p>
@@ -1387,63 +1711,42 @@ function renderCase(i){
   $$('#caselist button').forEach((b, j) => b.setAttribute('aria-current', String(j === i)));
 }
 
+/* list rows: 코드 | 이름 | 규모 */
 $('#caselist').innerHTML = CASES.map((c, i) => `
   <button type="button" role="listitem" data-i="${i}">
-    <span class="yr">${c.when.slice(0, 5).replace('년','')}.${String(c.when.match(/(\d+)월/)[1]).padStart(2,'0')}</span>
+    <span class="yr">${Face.code(i).replace('#LEAK-', '')}</span>
     <span class="nm">${c.name}</span>
     <span class="sz">${kn(c.n / 10000)}만 ${c.unit}</span>
   </button>`).join('');
 
+let curCase = -1, pinned = -1;
+const showCase = i => { curCase = i; renderCase(i); };
+
 $$('#caselist button').forEach(b => {
   const i = +b.dataset.i;
-  const pick = () => { Face.focusCase(i); renderCase(i); };
+  const pick = () => { pinned = i; Face.focusCase(i); showCase(i); };   // stays put while the idle scan moves on
   b.addEventListener('click', pick);
   b.addEventListener('focus', pick);
 });
 
-let curCase = 0;
-renderCase(0);
-Face.onActive(i => { if (i >= 0 && i !== curCase){ curCase = i; renderCase(i); } });
+renderCase(-1);
+/* the inset — user or idle scan — drives the CASE FILE unless a case is pinned with Enter */
+Face.onActive(i => { if (i >= 0 && i !== curCase && pinned < 0) showCase(i); });
+Face.onMove(() => { pinned = -1; });
+Face.onScan(() => { pinned = -1; });
 
-/* Arrow-key navigation over the face (접근성) */
+/* Keyboard over the analysis area (7.1.9): arrows move the inset 14px, Enter pins the case */
 $('#facewrap').addEventListener('keydown', e => {
-  const d = { ArrowRight:1, ArrowDown:1, ArrowLeft:-1, ArrowUp:-1 }[e.key];
-  if (!d) return;
-  e.preventDefault();
-  curCase = (curCase + d + CASES.length) % CASES.length;
-  Face.focusCase(curCase); renderCase(curCase);
-  live(`${CASES[curCase].when} ${CASES[curCase].name}, ${kn(CASES[curCase].n / 10000)}만 ${CASES[curCase].unit} 유출`);
+  const d = { ArrowRight:[1, 0], ArrowLeft:[-1, 0], ArrowDown:[0, 1], ArrowUp:[0, -1] }[e.key];
+  if (d){ e.preventDefault(); Face.nudge(d[0], d[1]); return; }
+  if (e.key === 'Enter' || e.key === ' '){
+    e.preventDefault();
+    const i = Face.active;
+    if (i < 0){ live('얼굴 바깥입니다. 방향키로 얼굴 위로 옮기세요.'); return; }
+    pinned = i; showCase(i);
+    live(`${CASES[i].when} ${CASES[i].name}, ${kn(CASES[i].n / 10000)}만 ${CASES[i].unit} 유출. 사례를 고정했습니다.`);
+  }
 });
-
-/* H-8 — leader labels when the middle column has room to spare */
-function drawLeaders(){
-  if (S.screen !== 'home') return;
-  const svg = $('#leaders'), b = Face.box();
-  if (!LAP() || b.W < b.BW + 260){ svg.innerHTML = ''; return; }
-  const margin = (b.W - b.BW) / 2;
-  const left = [], right = [];
-  CASES.forEach((c, i) => {
-    const p = Face.centroid(i);
-    if (!p) return;
-    (p[0] < b.W / 2 ? left : right).push({ i, c, p });
-  });
-  const place = (arr, side) => {
-    arr.sort((a, z) => a.p[1] - z.p[1]);
-    let last = -1e9;
-    return arr.map(o => {
-      const y = Math.max(last + 22, Math.min(b.H - 10, o.p[1]));
-      last = y;
-      const lx = side === 'l' ? margin - 14 : b.W - margin + 14;
-      const tx = side === 'l' ? margin - 20 : b.W - margin + 20;
-      const on = Face.active === o.i;
-      return `<line x1="${o.p[0]}" y1="${o.p[1]}" x2="${lx}" y2="${y}" class="${on?'act':''}"/>` +
-             `<text x="${tx}" y="${y + 4}" text-anchor="${side === 'l' ? 'end' : 'start'}" class="${on?'act':''}">${o.c.name}</text>`;
-    }).join('');
-  };
-  svg.setAttribute('viewBox', `0 0 ${b.W} ${b.H}`);
-  svg.innerHTML = place(left, 'l') + place(right, 'r');
-}
-setInterval(drawLeaders, 220);
 
 /* ============================================================
    00 Consent (PRD 7.2)
