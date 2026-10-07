@@ -131,28 +131,45 @@ a{color:inherit}
 
 /* ---------- 5.2 home ---------- */
 #s-home{cursor:pointer}
+#s-home.opened{cursor:default}
 #s-home .title{
   position:absolute;left:0;right:0;top:84px;
   text-align:center;white-space:nowrap;user-select:none;
   font:600 300px/1 var(--font-latin);letter-spacing:-.035em;
 }
+.figs{position:absolute;inset:0;pointer-events:none;transition:opacity .6s ease}
 .fig{position:absolute;left:0;top:0;width:1920px;height:1080px;pointer-events:none}
 .fig.blur{filter:blur(23px);opacity:.92}
+/* mockup 01 — "마우스 오버 시 해당 정보 영역 확대": a sharp 1.6× lens under the cursor */
 .fig.sharp{
-  opacity:.92;
-  -webkit-mask-image:radial-gradient(circle 120px at var(--mx,-600px) var(--my,-600px),#000 45%,transparent 100%);
-          mask-image:radial-gradient(circle 120px at var(--mx,-600px) var(--my,-600px),#000 45%,transparent 100%);
+  opacity:.95;
+  transform-origin:var(--mx,-600px) var(--my,-600px);
+  transform:scale(1.6);
+  -webkit-mask-image:radial-gradient(circle 82px at var(--mx,-600px) var(--my,-600px),#000 70%,transparent 100%);
+          mask-image:radial-gradient(circle 82px at var(--mx,-600px) var(--my,-600px),#000 70%,transparent 100%);
 }
-.caseline{
-  position:absolute;left:0;top:0;z-index:5;max-width:560px;
-  padding:14px 20px;border-radius:18px;background:var(--card);border:1px solid var(--line);
-  font:400 15px/1.5 var(--font-ko);color:var(--ink);
-  opacity:0;transition:opacity .25s ease;pointer-events:none;
-}
-.caseline b{font:600 15px var(--font-latin);margin-right:8px}
-.caseline .cap{display:block;font-size:15px}
-.caseline.on{opacity:1}
-#go-start{position:absolute;left:50%;bottom:72px;transform:translateX(-50%);z-index:4}
+.parts{position:absolute;inset:0;pointer-events:none}
+.parts i{position:absolute;left:0;top:0;width:16px;height:16px;border-radius:3px}
+.intro{position:absolute;left:0;right:0;top:470px;text-align:center;opacity:0;visibility:hidden;transition:opacity .8s ease, visibility 0s .8s}
+.intro.on{opacity:1;visibility:visible;transition:opacity .8s ease .2s}
+.intro ul{list-style:none;margin-top:36px;display:flex;flex-direction:column;gap:14px;font:400 22px/1.5 var(--font-ko);color:var(--ink-soft)}
+.intro .btn{margin-top:48px}
+.skipbtn{position:absolute;left:72px;bottom:56px;padding:12px 20px;border-radius:var(--radius-pill);background:var(--card);border:1px solid var(--line);font:500 15px/1 var(--font-ko);opacity:0;pointer-events:none}
+.skipbtn:focus-visible{opacity:1;pointer-events:auto}
+
+/* ☰ data page */
+.data{position:absolute;left:200px;right:200px;top:170px}
+.data .sent{margin-top:14px}
+.bars{margin:40px 0 28px;display:flex;flex-direction:column;gap:14px}
+.bar{display:grid;grid-template-columns:260px 1fr;align-items:center;gap:24px}
+.bar .nm{font:500 18px/1.2 var(--font-ko);text-align:right}
+.bar .nm small{display:block;font:400 14px/1.4 var(--font-latin);color:var(--ink-soft);margin-top:4px}
+.bar .tr{display:flex;align-items:center;gap:14px}
+.bar .fill{display:block;height:34px;border-radius:0 8px 8px 0;background:var(--ill-slate-light);transform-origin:left center}
+.bar.hi .fill{background:var(--signal)}
+.bar .v{font:600 17px/1 var(--font-ko);white-space:nowrap}
+.bar .v small{font:400 14px var(--font-ko);color:var(--ink-soft);margin-left:8px}
+
 
 /* ---------- 00 consent (prologue) ---------- */
 .prologue{position:absolute;left:200px;top:220px;width:560px}
@@ -195,6 +212,26 @@ a{color:inherit}
 .back:hover{background:rgba(17,17,17,.06)}
 .steph{font:700 var(--text-step)/1 var(--font-latin);letter-spacing:-.01em}
 .prog{position:absolute;right:var(--edge-x);top:var(--edge-y);font:400 var(--text-step)/48px var(--font-latin)}
+.prog:empty{display:none}
+
+/* mockup 04 「체험 후 유출 현황」 — 알림 after every step */
+.alert{
+  position:absolute;z-index:30;left:592px;top:340px;width:736px;
+  background:var(--card);border-radius:22px;box-shadow:0 12px 44px rgba(17,17,17,.10);
+}
+.al-head{position:relative;height:68px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #ECECEC}
+.al-head h3{font:600 17px/1 var(--font-ko)}
+.al-x{position:absolute;right:12px;top:10px;width:48px;height:48px;display:grid;place-items:center;border-radius:12px}
+.al-x:hover{background:var(--paper-deep)}
+.al-body{display:grid;grid-template-columns:210px 1fr;align-items:center;padding:40px 48px 48px 28px}
+.al-fp{text-align:center}
+.al-fp svg{width:124px;height:124px;display:block;margin:0 auto;overflow:visible}
+.al-fp p{font:500 18px/1 var(--font-latin);margin-top:18px}
+.al-t{font:600 19px/1.4 var(--font-ko)}
+.al-body ul{list-style:none;margin-top:20px;display:flex;flex-direction:column;gap:12px}
+.al-body li{position:relative;padding-left:20px;font:400 17px/1.3 var(--font-ko);color:var(--ink-soft)}
+.al-body li::before{content:'';position:absolute;left:4px;top:.55em;width:5px;height:5px;border-radius:50%;background:var(--ink-soft)}
+
 .readout{position:absolute;left:var(--edge-x);bottom:var(--edge-y);display:flex;gap:80px}
 .readout dd{font:600 var(--text-hud-value)/1 'Inter','Pretendard',-apple-system,sans-serif;margin-top:6px;white-space:nowrap}
 
@@ -319,13 +356,9 @@ dialog::backdrop{background:rgba(17,17,17,.28)}
 dialog h2{font:600 28px/1.3 var(--font-latin);letter-spacing:-.01em}
 dialog p{font:400 16px/1.7 var(--font-ko);margin-top:14px;color:var(--ink-soft)}
 dialog .btn{margin-top:28px}
-.menu{list-style:none;margin-top:20px}
-.menu button{display:block;width:100%;text-align:left;padding:16px 0;border-bottom:1px solid var(--paper-deep);font:500 20px/1.2 var(--font-ko)}
-.menu button:hover{color:var(--signal)}
-.menu button:disabled{color:var(--line);cursor:default}
 
 @media (prefers-reduced-motion: reduce){
-  #ill,#hud,.eline,.btn,.verb,.caseline{transition:none!important}
+  #ill,#hud,.eline,.btn,.verb,.figs,.intro{transition:none!important}
   .hit.cue::after{animation:none;opacity:.6}
 }
 </style>
@@ -335,17 +368,24 @@ dialog .btn{margin-top:28px}
 <!-- Shared SVG paint (gradients are referenced from every scene) -->
 <svg id="defs" aria-hidden="true" focusable="false">
   <defs>
-    <linearGradient id="gHand" gradientUnits="userSpaceOnUse" x1="0" y1="380" x2="0" y2="1080">
-      <stop offset="0" stop-color="#C8A6A2"/><stop offset=".5" stop-color="#B9918E"/><stop offset="1" stop-color="#B3B9CC"/>
+    <!-- tone sampled from the week-6 screen mockups -->
+    <linearGradient id="gHand" gradientUnits="userSpaceOnUse" x1="0" y1="440" x2="0" y2="1080">
+      <stop offset="0" stop-color="#C49A93"/><stop offset=".42" stop-color="#B28685"/><stop offset=".78" stop-color="#A9A0B8"/><stop offset="1" stop-color="#8B96B5"/>
     </linearGradient>
     <linearGradient id="gSleeve" gradientUnits="userSpaceOnUse" x1="0" y1="820" x2="0" y2="1080">
-      <stop offset="0" stop-color="#F6F4F2"/><stop offset=".55" stop-color="#E2E4EC"/><stop offset="1" stop-color="#B3B9CC"/>
+      <stop offset="0" stop-color="#F7F6F3"/><stop offset=".5" stop-color="#E3E5EE"/><stop offset="1" stop-color="#9AA4C4"/>
     </linearGradient>
     <linearGradient id="gSlate" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#69718F"/><stop offset="1" stop-color="#4F5775"/>
+      <stop offset="0" stop-color="#66709C"/><stop offset="1" stop-color="#535C88"/>
     </linearGradient>
     <linearGradient id="gCafeWall" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#F3F1EC"/><stop offset="1" stop-color="#EDE9E7"/>
+      <stop offset="0" stop-color="#EFE8E2"/><stop offset="1" stop-color="#E9E2DC"/>
+    </linearGradient>
+    <linearGradient id="gTrash" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7E8AAA"/><stop offset="1" stop-color="#6E7B9B"/>
+    </linearGradient>
+    <linearGradient id="gAlFill" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#7DB8F2"/><stop offset="1" stop-color="#A9D2F8"/>
     </linearGradient>
     <linearGradient id="gMorning" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#F7F5F1"/><stop offset=".6" stop-color="#F0EDEA"/><stop offset="1" stop-color="#E6E3E6"/>
@@ -383,32 +423,59 @@ dialog .btn{margin-top:28px}
     <span class="team">D.C.S</span>
     <button class="lnk" type="button" data-go="home">Home</button>
     <button class="lnk" type="button" data-open="about">About</button>
-    <button class="burger" type="button" data-open="menu" aria-label="메뉴 열기">
+    <button class="burger" type="button" data-go="data" aria-label="정보 시각화 그래프 보기">
       <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="#111" stroke-width="2" stroke-linecap="round"/></svg>
     </button>
   </header>
 
-  <!-- ======================= HOME (5.2) ======================= -->
+  <!-- ======================= HOME (mockup 01) ======================= -->
   <section class="scr" id="s-home" aria-labelledby="home-h">
     <h1 class="title" id="home-h" tabindex="-1">Leak by Leak</h1>
-    <svg class="fig blur" viewBox="0 0 1920 1080" aria-hidden="true"><use href="#figure"/></svg>
-    <svg class="fig sharp" id="figsharp" viewBox="0 0 1920 1080" aria-hidden="true">
-      <g id="figure">
-        <path d="M960 742c128 0 232 34 344 76 128 48 200 120 236 262H380c36-142 108-214 236-262 112-42 216-76 344-76z" fill="url(#gFigBody)"/>
-        <path d="M902 600h116l10 166c-22 22-114 22-136 0z" fill="url(#gFigNeck)"/>
-        <ellipse cx="842" cy="508" rx="17" ry="38" fill="#8C7C88"/>
-        <ellipse cx="1078" cy="508" rx="17" ry="38" fill="#7E6F7B"/>
-        <ellipse cx="960" cy="486" rx="120" ry="152" fill="url(#gFigHead)"/>
-        <ellipse cx="914" cy="492" rx="30" ry="15" fill="#6C6372" opacity=".32"/>
-        <ellipse cx="1008" cy="492" rx="30" ry="15" fill="#6C6372" opacity=".36"/>
-        <path d="M960 500c-6 26-14 46-14 58 0 8 8 12 18 12" fill="none" stroke="#6C6372" stroke-width="5" stroke-linecap="round" opacity=".35"/>
-        <path d="M932 594c18 8 40 8 58 0" fill="none" stroke="#6C6372" stroke-width="5" stroke-linecap="round" opacity=".3"/>
-        <ellipse cx="960" cy="652" rx="74" ry="22" fill="#6C6372" opacity=".25"/>
-        <path d="M760 852c70-16 130-24 200-24s130 8 200 24" fill="none" stroke="#6C6372" stroke-width="8" stroke-linecap="round" opacity=".18"/>
-      </g>
-    </svg>
-    <p class="caseline" id="caseline" aria-hidden="true"></p>
-    <button class="btn" id="go-start" type="button">시작하기</button>
+    <div class="figs" id="figs">
+      <svg class="fig blur" viewBox="0 0 1920 1080" aria-hidden="true"><use href="#figure"/></svg>
+      <svg class="fig sharp" id="figsharp" viewBox="0 0 1920 1080" aria-hidden="true">
+        <defs>
+          <clipPath id="figClip">
+            <ellipse cx="960" cy="520" rx="158" ry="205"/>
+            <path d="M890 680h140l12 160c80 6 150 26 218 58 110 55 160 106 175 182H535c15-76 65-127 175-182 68-32 138-52 168-58z"/>
+          </clipPath>
+        </defs>
+        <g id="figure">
+          <path d="M960 830c90 0 170 24 250 64 110 55 160 106 175 186H535c15-80 65-131 175-186 80-40 160-64 250-64z" fill="url(#gFigBody)"/>
+          <path d="M890 680h140l12 170c-30 30-134 30-164 0z" fill="url(#gFigNeck)"/>
+          <ellipse cx="800" cy="545" rx="20" ry="50" fill="#8C7C88"/>
+          <ellipse cx="1120" cy="545" rx="20" ry="50" fill="#7E6F7B"/>
+          <ellipse cx="960" cy="520" rx="158" ry="205" fill="url(#gFigHead)"/>
+          <ellipse cx="900" cy="530" rx="38" ry="18" fill="#6C6372" opacity=".3"/>
+          <ellipse cx="1022" cy="530" rx="38" ry="18" fill="#6C6372" opacity=".34"/>
+          <path d="M960 540c-6 34-16 60-16 74 0 10 10 15 22 15" fill="none" stroke="#6C6372" stroke-width="6" stroke-linecap="round" opacity=".3"/>
+          <path d="M922 660c24 10 52 10 76 0" fill="none" stroke="#6C6372" stroke-width="6" stroke-linecap="round" opacity=".26"/>
+          <ellipse cx="960" cy="728" rx="92" ry="26" fill="#6C6372" opacity=".25"/>
+          <g id="figData" clip-path="url(#figClip)" font-family="Pretendard, Inter, sans-serif" font-size="15" fill="#FEFBF6" opacity=".45"></g>
+        </g>
+      </svg>
+    </div>
+    <div class="parts" id="parts" aria-hidden="true"></div>
+    <div class="intro" id="intro">
+      <p class="sent">흘린 줄도 몰랐던 조각이 모이면, 한 사람이 됩니다.</p>
+      <ul>
+        <li>1인칭 시점으로 가상의 인물의 하루를 따라갑니다.</li>
+        <li>시간의 흐름에 따라 5개의 일상 속 상황을 순서대로 체험합니다.</li>
+        <li>각 상황에서 무심코 노출되는 개인정보를 직접 발견합니다.</li>
+      </ul>
+      <button class="btn" id="go-start" type="button" tabindex="-1">체험 시작</button>
+    </div>
+    <button class="skipbtn" id="go-intro" type="button">프로젝트 소개 보기</button>
+  </section>
+
+  <!-- ======================= DATA (☰ — mockup 01: 정보 시각화 그래프 페이지) ======================= -->
+  <section class="scr" id="s-data" aria-labelledby="data-h">
+    <div class="data">
+      <p class="key">DATA</p>
+      <h2 class="sent" id="data-h" tabindex="-1">국내 개인정보 유출 사고, 규모로 보기</h2>
+      <div class="bars" id="bars" role="list"></div>
+      <p class="cap">단위가 사고마다 다릅니다(명·건·계정). 같은 사람이 여러 사고에 겹칠 수 있어 합계는 내지 않았습니다.</p>
+    </div>
   </section>
 
   <!-- ======================= 00 CONSENT (prologue, PRD 13-2) ======================= -->
@@ -456,6 +523,28 @@ dialog .btn{margin-top:28px}
       </dl>
     </div>
     <button class="btn" id="next" type="button" hidden>다음 장면</button>
+    <div class="alert" id="alert" role="dialog" aria-modal="true" aria-labelledby="alert-h" hidden>
+      <div class="al-head">
+        <h3 id="alert-h">알림</h3>
+        <button class="al-x" id="alert-x" type="button" aria-label="닫고 다음 장면으로">
+          <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 4l14 14M18 4 4 18" stroke="#111" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="al-body">
+        <div class="al-fp">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <defs><clipPath id="alClip"><rect id="alClipRect" x="-4" y="68" width="72" height="0"/></clipPath></defs>
+            <g id="alBase" fill="none" stroke="#D6E9FB" stroke-width="2.6" stroke-linecap="round"></g>
+            <g id="alFill" fill="none" stroke="url(#gAlFill)" stroke-width="2.6" stroke-linecap="round" clip-path="url(#alClip)"></g>
+          </svg>
+          <p id="al-pct">20%</p>
+        </div>
+        <div>
+          <p class="al-t">사용자의 민감 개인정보가 추출 및 프로파일링되었습니다</p>
+          <ul id="al-list"></ul>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- ======================= RETURN CHECKLIST (5.4) ======================= -->
@@ -516,15 +605,6 @@ dialog .btn{margin-top:28px}
   <form method="dialog"><button class="btn">닫기</button></form>
 </dialog>
 
-<dialog id="menu" aria-labelledby="menu-h">
-  <h2 id="menu-h">Menu</h2>
-  <ul class="menu">
-    <li><button type="button" data-go="home">처음 화면</button></li>
-    <li><button type="button" data-go="start">체험 시작</button></li>
-    <li><button type="button" data-open="about">About</button></li>
-  </ul>
-  <form method="dialog"><button class="btn">닫기</button></form>
-</dialog>
 
 <p class="sr" id="live" aria-live="polite"></p>
 
@@ -613,38 +693,46 @@ $('#fpBase').innerHTML = fpMarkup;
 $('#fpFill').innerHTML = fpMarkup;
 
 /* ============================================================
-   PRD 7.2 — the day: four scenes
+   The day — five scenes (week-6 screen mockups 02–04)
    ============================================================ */
 const SCENES = [
-  { time:'09:00', loc:'Home', place:'집 — 아침', what:'중고거래 게시글 사진 올리기',
-    alt:'아침, 집. 두 손에 든 휴대폰에 중고거래 앱의 판매글 쓰기 화면이 열려 있다.',
-    leak:{ x:1056, y:444 },
-    frags:[['이름','identity'],['집 주소','location'],['판매 물건','relation']] },
-  { time:'12:30', loc:'Cafe', place:'외부 — 카페', what:'결제 후 영수증 버리기',
-    alt:'점심, 카페. 왼손에는 커피, 오른손에는 방금 받은 영수증. 앞에 쓰레기통이 있다.',
+  { time:'11:00', loc:'Home', what:'중고거래 게시글 작성',
+    alt:'오전, 집. 두 손에 든 휴대폰에 중고거래 앱 목록이 열려 있다.',
+    leak:{ x:900, y:700 },
+    frags:[['취향','relation'],['전화번호','contact'],['계좌번호','finance'],['활동 지역/생활반경','location']] },
+  { time:'14:00', loc:'Cafe', what:'음료 결제 후 영수증 버리기',
+    alt:'오후, 카페. 왼손에는 커피, 오른손에는 방금 받은 영수증. 앞에 쓰레기통이 있다.',
     leak:{ x:960, y:300 },
-    frags:[['카드번호 일부','finance'],['결제 시각','time'],['매장 위치','location'],['번호 뒷자리','contact']] },
-  { time:'13:10', loc:'Cafe', place:'외부 — 카페', what:'친구 사진 SNS 게시',
-    alt:'카페. 휴대폰 카메라에 친구와 나란히 앉은 모습이 잡혀 있다.',
-    leak:{ x:960, y:606 },
-    frags:[['얼굴','identity'],['장소 태그','location'],['함께 있는 사람','relation'],['게시 시각','time']] },
-  { time:'19:00', loc:'Home', place:'집 — 저녁', what:'택배 상자 버리기',
-    alt:'저녁, 집. 송장이 붙은 택배 상자를 두 손으로 들고 있고, 옆에 분리수거함이 있다.',
-    leak:{ x:1415, y:483 },
-    frags:[['이름','identity'],['연락처','contact'],['집 주소','location'],['구매 품목','relation']] }
+    frags:[['구매 내역','relation'],['결제 시각','time'],['결제 정보','finance'],['매장 위치','location']] },
+  { time:'15:00', loc:'Cafe', what:'지도에 장소 리뷰 남기기',
+    alt:'카페. 휴대폰 지도 앱에 BLOOM CAFE 리뷰 쓰기 화면이 열려 있다.',
+    leak:{ x:978, y:503 },
+    frags:[['방문 장소','location'],['방문 횟수','time'],['프로필','identity']] },
+  { time:'17:00', loc:'Cafe', what:'인스타그램 사진 업로드',
+    alt:'카페. 휴대폰에 커피 사진을 올리는 새 게시물 화면이 열려 있다.',
+    leak:{ x:960, y:739 },
+    frags:[['위치 태그','location'],['게시 시각','time'],['관심사','relation']] },
+  { time:'20:00', loc:'Home', what:'택배 수령 후 상자 버리기',
+    alt:'저녁, 집. 책상 위에 송장이 붙은 택배 상자와 커터칼이 있고, 옆에 분리수거함이 있다.',
+    leak:{ x:1607, y:533 },
+    frags:[['이름','identity'],['주소','location'],['전화번호','contact'],['구매 품목','relation']] }
 ];
-/* STEP 5 HUD — invented, masked values. LOCATION narrows with each fragment, in step with CANDS. */
+const NSC = SCENES.length;            // the combine stage comes after the five scenes
+/* Combine HUD — invented, masked values. LOCATION narrows with each fragment, in step with CANDS. */
 const COMBINE = { time:'23:40', loc:'Seoul' };
 const COMBINE_LOC = ['Seoul', '○○구', '○○동', '○○로 ●●', '○○로 ●●, 302호'];
 
 /* PRD 7.4 — solutions matched 1:1 to scenes */
 const FIXES = [
-  { id:'photo',   step:1, text:'중고거래 사진은 배경을 비우고 찍기',        back:['이름','집 주소'] },
-  { id:'receipt', step:2, text:'영수증은 받지 않거나 찢어서 버리기',        back:['카드번호 일부','번호 뒷자리'] },
-  { id:'sns',     step:3, text:'SNS 위치 태그 끄고, 친구 얼굴은 묻고 올리기', back:['장소 태그','함께 있는 사람'] },
-  { id:'label',   step:4, text:'송장은 지우거나 떼고 버리기',              back:['이름','연락처','집 주소'] },
-  { id:'2fa',     step:0, text:'2단계 인증 설정',                       back:[] }
+  { id:'trade',   step:1, text:'중고거래 글에는 연락처·계좌 대신 앱 채팅 쓰기', back:['전화번호','계좌번호'] },
+  { id:'receipt', step:2, text:'영수증은 받지 않거나 찢어서 버리기',          back:['결제 정보','구매 내역'] },
+  { id:'review',  step:3, text:'지도 앱 방문 기록 끄고, 리뷰 프로필은 비공개로', back:['방문 횟수','프로필'] },
+  { id:'sns',     step:4, text:'SNS 위치 태그 끄고 올리기',                 back:['위치 태그'] },
+  { id:'label',   step:5, text:'송장은 지우거나 떼고 버리기',                back:['이름','주소','전화번호'] },
+  { id:'2fa',     step:0, text:'2단계 인증 설정',                         back:[] }
 ];
+/* 2단계 인증 recovers no fragment; it blocks the combination, worth this many points */
+const TWO_FA = 10;
 
 /* PRD 7.3 J-2 / 8 — 3,370만 is sourced, the rest are labelled estimates */
 const CANDS = [33700000, 1200, 47, 1];
@@ -652,8 +740,8 @@ const CANDS = [33700000, 1200, 47, 1];
 /* ---------- State ---------- */
 const S = {
   screen:'home',
-  step:0,                 // 0–3 scenes, 4 = combine
-  done:[false, false, false, false],
+  step:0,                 // 0–4 scenes, 5 = combine
+  done:[false, false, false, false, false],
   frags:[],               // {uid, label, cat, step}
   combined:[],            // uids placed in the centre (max 4)
   checked:new Set(),
@@ -663,7 +751,7 @@ const S = {
 let UID = 0;
 
 /* PRD 7.4 G-2 — exposure = what is still out there.
-   Each scene is worth 20%, split evenly over its fragments; the combine step is the last 20%. */
+   Each scene is worth 20%, split evenly over its fragments. */
 function recovered(step, label){
   return FIXES.some(f => f.step === step && S.checked.has(f.id) && f.back.includes(label));
 }
@@ -673,8 +761,8 @@ function exposure(){
     if (!S.done[i]) return;
     sc.frags.forEach(([l]) => { if (!recovered(i + 1, l)) p += 20 / sc.frags.length; });
   });
-  if (!S.checked.has('2fa')) p += S.combined.length * 5;
-  return Math.round(p);
+  if (S.checked.has('2fa')) p -= TWO_FA;
+  return Math.max(0, Math.round(p));
 }
 
 /* ---------- 6.4 fingerprint card ---------- */
@@ -697,7 +785,7 @@ async function updateCard(){
 /* ============================================================
    Router
    ============================================================ */
-const NAV_ON = ['home', 'consent', 'return', 'erase', 'receipt'];
+const NAV_ON = ['home', 'data', 'consent', 'return', 'erase', 'receipt'];
 const CARD_ON = ['scene', 'return'];
 
 function show(id, focus = true){
@@ -725,6 +813,7 @@ document.addEventListener('click', e => {
     $$('dialog[open]').forEach(d => d.close());
     if (g.dataset.go === 'home') goHome();
     if (g.dataset.go === 'start') startConsent();
+    if (g.dataset.go === 'data') showData();
     e.stopPropagation();
   }
 });
@@ -732,7 +821,7 @@ document.addEventListener('click', e => {
 /* ============================================================
    HOME (5.2 / 7.1 / PRD 7.6)
    ============================================================ */
-/* Title fills the width with a 4vw side margin. */
+/* Title fills the width, as in mockup 01. */
 function fitTitle(){
   const t = $('#s-home .title');
   const was = $('#s-home').classList.contains('on');
@@ -745,65 +834,122 @@ function fitTitle(){
   const w = span.getBoundingClientRect().width / K;
   span.remove();
   if (!was) $('#s-home').classList.remove('on');
-  if (w) t.style.fontSize = (300 * (1920 - 2 * 77) / w).toFixed(1) + 'px';
+  if (w) t.style.fontSize = (300 * (1920 - 2 * 64) / w).toFixed(1) + 'px';
 }
 
-/* H-4 — where the blur lifts, one real case surfaces */
+/* Real incidents — drawn on the ☰ data page */
 const CASES = [
-  ['2025.11', '쿠팡', '3,370만 계정', '이름 · 전화번호 · 배송지 · 공동현관 비밀번호', '정부 민관합동조사'],
-  ['2025.04', 'SK텔레콤', '2,324만 명', '휴대전화번호 · 유심 인증키', '개인정보보호위원회 의결'],
-  ['2025.08', '롯데카드', '297만 명', '결제 식별정보 · 일부 카드번호', '롯데카드 발표'],
-  ['2016.05', '인터파크', '1,030만 명', '이름 · 아이디 · 주소 · 전화번호', '언론 보도'],
-  ['2014.03', 'KT', '1,170만 건', '이름 · 주소 · 주민번호 · 전화번호', '방송통신위원회'],
-  ['2011.07', '네이트·싸이월드', '3,500만 명', '주민번호 · 이름 · 이메일 · 주소', '언론 보도']
+  { when:'2014.01', name:'카드 3사', n:104000000, unit:'건', src:'언론 보도' },
+  { when:'2011.07', name:'네이트·싸이월드', n:35000000, unit:'명', src:'언론 보도' },
+  { when:'2025.11', name:'쿠팡', n:33700000, unit:'계정', src:'정부 민관합동조사' },
+  { when:'2025.04', name:'SK텔레콤', n:23240000, unit:'명', src:'개인정보보호위원회 의결' },
+  { when:'2011.11', name:'넥슨', n:13200000, unit:'명', src:'언론 보도' },
+  { when:'2014.03', name:'KT', n:11700000, unit:'건', src:'방송통신위원회' },
+  { when:'2008.02', name:'옥션', n:10810000, unit:'명', src:'언론 보도' },
+  { when:'2016.05', name:'인터파크', n:10300000, unit:'명', src:'언론 보도' },
+  { when:'2025.08', name:'롯데카드', n:2970000, unit:'명', src:'롯데카드 발표' }
 ];
-const onFigure = (x, y) =>
-  ((x - 960) / 150) ** 2 + ((y - 486) / 180) ** 2 < 1 ||
-  (y > 700 && Math.abs(x - 960) < 110 + (y - 700) * 1.35);
+const man = n => { const m = Math.round(n / 1e4); return m >= 1e4 ? `${Math.floor(m / 1e4)}억 ${kn(m % 1e4)}만` : `${kn(m)}만`; };
 
+/* mockup 01 — "정보가 모여 하나의 사람을 이루는 그래픽": the figure is woven from masked data lines */
 (() => {
-  const home = $('#s-home'), sharp = $('#figsharp'), line = $('#caseline');
-  let last = -1;
+  const words = ['010-●●●●-1234', '서울시 ○○구', '○○동 · ○○역', '카드 ●●●● 1234', 'BLOOM CAFE', '14:02', '₩ 25,000', '김○○',
+                 'sujin', '○○은행 ●●●-●●', '무선 이어폰', '총 5회 방문', '302호', '17:00', '위치 태그', '1.2km', '○○로 ●●'];
+  let out = '', k = 0;
+  for (let y = 312; y < 1090; y += 22){
+    let line = '';
+    for (let j = 0; j < 14; j++) line += words[(k++ * 7) % words.length] + '   ';
+    out += `<text x="${520 - (y * 3) % 90}" y="${y}">${line}</text>`;
+  }
+  $('#figData').innerHTML = out;
+})();
+
+const onFigure = (x, y) =>
+  ((x - 960) / 165) ** 2 + ((y - 520) / 212) ** 2 < 1 ||
+  (y > 690 && y <= 830 && Math.abs(x - 960) < 76) ||
+  (y > 830 && Math.abs(x - 960) < 80 + (y - 830) * 1.36);
+
+const Home = (() => {
+  const home = $('#s-home'), sharp = $('#figsharp');
+  let opened = false;
+  const lens = (x, y) => { sharp.style.setProperty('--mx', x + 'px'); sharp.style.setProperty('--my', y + 'px'); };
   home.addEventListener('pointermove', e => {
-    if (RM.matches || e.pointerType === 'touch') return;
+    if (RM.matches || e.pointerType === 'touch' || opened) return;
     const p = toStage(e);
-    sharp.style.setProperty('--mx', p.x + 'px');
-    sharp.style.setProperty('--my', p.y + 'px');
-    if (!onFigure(p.x, p.y)){ line.classList.remove('on'); return; }
-    /* region of the figure picks the case: angle around the face */
-    const a = Math.atan2(p.y - 560, p.x - 960);
-    const i = Math.floor(((a + Math.PI) / (Math.PI * 2)) * CASES.length) % CASES.length;
-    if (i !== last){
-      const c = CASES[i];
-      line.innerHTML = `<b>${c[0]}</b>${c[1]} · ${c[2]} — ${c[3]}<span class="cap">${c[4]}</span>`;
-      last = i;
+    onFigure(p.x, p.y) ? lens(p.x, p.y) : lens(-600, -600);
+  });
+  home.addEventListener('pointerleave', () => lens(-600, -600));
+
+  /* mockup 01 — "클릭하면 형상이 분해되며 프로젝트 주제 소개" */
+  function open(from){
+    if (opened) return;
+    opened = true;
+    home.classList.add('opened');
+    lens(-600, -600);
+    const parts = $('#parts');
+    if (!RM.matches){
+      const o = from || { x:960, y:600 };
+      for (let y = 300; y < 1080; y += 24) for (let x = 520; x < 1400; x += 24){
+        if (!onFigure(x, y)) continue;
+        const el = document.createElement('i');
+        const t = clamp((y - 300) / 780, 0, 1);
+        el.style.background = `rgb(${Math.round(190 - 80 * t)},${Math.round(176 - 76 * t)},${Math.round(186 - 72 * t)})`;
+        parts.appendChild(el);
+        const a = Math.atan2(y - o.y, x - o.x) + (Math.random() - .5) * .8;
+        const d = 180 + Math.random() * 520;
+        el.animate([
+          { transform:`translate(${x}px,${y}px)`, opacity:.9 },
+          { transform:`translate(${x + Math.cos(a) * d}px,${y + Math.sin(a) * d - 120}px) rotate(${(Math.random() - .5) * 240}deg) scale(.4)`, opacity:0 }
+        ], { duration:1200 + Math.random() * 500, delay:Math.hypot(x - o.x, y - o.y) * .6, easing:'cubic-bezier(.2,.6,.3,1)', fill:'both' });
+      }
+      setTimeout(() => { if (opened) parts.innerHTML = ''; }, 2600);
     }
-    const lx = p.x > 1300 ? p.x - 600 : p.x + 140;
-    line.style.transform = `translate(${clamp(lx, 40, 1340)}px,${clamp(p.y - 30, 120, 960)}px)`;
-    line.classList.add('on');
-  });
-  home.addEventListener('pointerleave', () => {
-    sharp.style.setProperty('--mx', '-600px');
-    line.classList.remove('on');
-  });
-  /* H-3 — scroll or click starts */
+    $('#figs').style.opacity = '0';
+    $('#intro').classList.add('on');
+    $('#go-start').tabIndex = 0;
+    setTimeout(() => $('#go-start').focus({ preventScroll:true }), RM.matches ? 0 : 900);
+    live('흘린 줄도 몰랐던 조각이 모이면, 한 사람이 됩니다.');
+  }
+  function restore(){
+    opened = false;
+    home.classList.remove('opened');
+    $('#parts').innerHTML = '';
+    $('#figs').style.opacity = '';
+    $('#intro').classList.remove('on');
+    $('#go-start').tabIndex = -1;
+  }
   home.addEventListener('click', e => {
-    if (e.target.closest('.nav, button, a')) return;
-    startConsent();
+    if (e.target.closest('button, a')) return;
+    open(toStage(e));
   });
   let wheelLock = 0;
   home.addEventListener('wheel', e => {
-    if (e.deltaY > 20 && performance.now() > wheelLock && !$('dialog[open]')){
-      wheelLock = performance.now() + 1500;
-      startConsent();
-    }
+    if (opened || e.deltaY <= 20 || performance.now() < wheelLock || $('dialog[open]')) return;
+    wheelLock = performance.now() + 1500;
+    open();
   }, { passive:true });
+  $('#go-intro').onclick = () => open();
   $('#go-start').onclick = () => startConsent();
+  return { restore };
 })();
 
 function goHome(){
   reset();
   show('home');
+}
+
+/* ☰ — "정보 시각화한 그래프를 확인 가능하도록 제공할 페이지" */
+function showData(){
+  const max = CASES[0].n;
+  $('#bars').innerHTML = CASES.map(c => `
+    <div class="bar${c.name === '쿠팡' ? ' hi' : ''}" role="listitem">
+      <p class="nm">${c.name}<small>${c.when}</small></p>
+      <div class="tr"><span class="fill" style="width:${Math.max(6, 900 * c.n / max).toFixed(0)}px"></span>
+        <span class="v">${man(c.n)} ${c.unit}<small>${c.src}</small></span></div>
+    </div>`).join('');
+  show('data');
+  if (!RM.matches) $$('#bars .fill').forEach((f, i) =>
+    f.animate([{ transform:'scaleX(0)' }, { transform:'scaleX(1)' }], { duration:700, delay:i * 60, easing:'cubic-bezier(.2,.8,.2,1)', fill:'backwards' }));
 }
 
 /* ============================================================
@@ -855,16 +1001,23 @@ $('#go-day').onclick = () => {
 };
 
 /* ============================================================
-   Illustration helpers (7.2 — flat, no outlines, muted pastel)
+   Illustration helpers — tone matched to the week-6 screen mockups
+   (warm paper, rose → lavender hands, slate-blue phone)
    ============================================================ */
 /* a finger: a round-capped stroke with a soft Rose Deep shadow under it */
 const fin = (x1, y1, x2, y2, w, sh = true) =>
-  (sh ? `<line x1="${x1 + 4}" y1="${y1 + 5}" x2="${x2 + 4}" y2="${y2 + 5}" stroke="#AD7D79" stroke-opacity=".35" stroke-width="${w}" stroke-linecap="round"/>` : '') +
+  (sh ? `<line x1="${x1 + 4}" y1="${y1 + 5}" x2="${x2 + 4}" y2="${y2 + 5}" stroke="#9E7377" stroke-opacity=".3" stroke-width="${w}" stroke-linecap="round"/>` : '') +
   `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="url(#gHand)" stroke-width="${w}" stroke-linecap="round"/>`;
 
 const svgOpen = alt => `<svg class="scene" viewBox="0 0 1920 1080" role="img" aria-label="${alt}">`;
 
-/* both hands around an upright phone — STEP 1 and STEP 3 */
+/* the plain warm-paper room behind the phone scenes (STEP 1, 3, 4) */
+const paperBg = `
+  <rect width="1920" height="1080" fill="#F2F0EB"/>
+  <path d="M0 0H600L300 1080H0z" fill="#FEFBF6" opacity=".5"/>
+  <path d="M1500 0H1920V1080H1700z" fill="#EAE7E4" opacity=".6"/>`;
+
+/* both hands around an upright phone — STEP 1, 3, 4 */
 function phoneHandsBack(){
   return `
   <path d="M300 1080c30-120 120-200 260-230l140 50c-20 80-40 140-50 180z" fill="url(#gSleeve)"/>
@@ -880,144 +1033,178 @@ function phoneHandsFront(){
 }
 function phoneBody(){
   return `
-  <ellipse cx="960" cy="950" rx="260" ry="26" fill="#4F5775" opacity=".08"/>
+  <ellipse cx="960" cy="950" rx="260" ry="26" fill="#535C88" opacity=".08"/>
   <rect x="740" y="96" width="440" height="830" rx="66" fill="url(#gSlate)"/>
   <rect x="756" y="112" width="408" height="798" rx="52" fill="#FBFAF8"/>`;
 }
-const notch = `<rect x="895" y="112" width="130" height="30" rx="15" fill="#4F5775"/>`;
+const notch = `<rect x="895" y="112" width="130" height="30" rx="15" fill="#535C88"/>`;
+const statusTime = t => `<text x="800" y="160" class="la" font-size="16" font-weight="600" fill="#535C88">${t}</text>`;
+const toast = (text, y = 834) => `
+  <rect x="820" y="${y}" width="280" height="50" rx="25" fill="#191A21" opacity=".86"/>
+  <text x="960" y="${y + 32}" text-anchor="middle" class="ko" font-size="16" fill="#FFFFFF">${text}</text>`;
 
-/* the cafe room — STEP 2 sharp, STEP 3 softened behind the phone */
+/* the cafe room — STEP 2 */
 function cafeRoom(){
   return `
   <rect width="1920" height="1080" fill="url(#gCafeWall)"/>
-  <path d="M0 700 1920 640V1080H0z" fill="#F3F1EC"/>
-  <path d="M1080 664 1480 652 1920 1080H1300z" fill="#FEFBF6" opacity=".75"/>
-  <rect x="1400" y="0" width="520" height="660" fill="#DCE0EA"/>
-  <circle cx="1560" cy="430" r="120" fill="#C3C8D7"/><circle cx="1720" cy="360" r="150" fill="#B3B9CC"/>
-  <circle cx="1870" cy="450" r="130" fill="#C3C8D7"/><circle cx="1480" cy="540" r="90" fill="#A9AFC3"/>
-  <rect x="1400" y="0" width="30" height="660" fill="#B3B9CC"/><rect x="1640" y="0" width="16" height="660" fill="#C9CDD8"/>
-  <rect x="1390" y="640" width="530" height="24" fill="#C9CDD8"/>
+  <path d="M0 700 1920 640V1080H0z" fill="#E6E2DF"/>
+  <path d="M1080 664 1480 652 1920 1080H1300z" fill="#F7F4F1" opacity=".85"/>
+  <path d="M260 760 880 700 1060 1080H160z" fill="#C9CFDC" opacity=".35"/>
+  <rect x="1400" y="0" width="520" height="660" fill="#E8D6D3"/>
+  <circle cx="1560" cy="430" r="120" fill="#B7C0D4"/><circle cx="1720" cy="360" r="150" fill="#A4B0C8"/>
+  <circle cx="1870" cy="450" r="130" fill="#B7C0D4"/><circle cx="1480" cy="540" r="90" fill="#8E9BC0"/>
+  <rect x="1400" y="0" width="34" height="660" fill="#4F5773"/><rect x="1640" y="0" width="22" height="660" fill="#4F5773"/>
+  <rect x="1390" y="636" width="530" height="28" fill="#4F5773"/>
   <rect x="770" y="80" width="150" height="190" fill="#F7F5F1"/>
-  <text x="790" y="122" font-family="Georgia,serif" font-size="24" fill="#4F5775">Good</text>
-  <text x="790" y="150" font-family="Georgia,serif" font-size="24" fill="#4F5775">Coffee</text>
-  <text x="790" y="178" font-family="Georgia,serif" font-size="24" fill="#4F5775">Better</text>
-  <text x="790" y="206" font-family="Georgia,serif" font-size="24" fill="#4F5775">Days</text>
+  <text x="790" y="122" font-family="Georgia,serif" font-size="24" fill="#4F5773">Good</text>
+  <text x="790" y="150" font-family="Georgia,serif" font-size="24" fill="#4F5773">Coffee</text>
+  <text x="790" y="178" font-family="Georgia,serif" font-size="24" fill="#4F5773">Better</text>
+  <text x="790" y="206" font-family="Georgia,serif" font-size="24" fill="#4F5773">Days</text>
   <rect x="790" y="228" width="100" height="14" rx="4" fill="#B3B9CC"/>
-  <rect x="950" y="112" width="96" height="116" fill="#B3B9CC"/>
-  <path d="M950 228 990 176 1016 200 1046 168V228z" fill="#8E95AE"/><circle cx="1020" cy="140" r="10" fill="#F7F5F1"/>
-  <path d="M0 420H640L700 470H0z" fill="#E6D3CF"/>
-  <rect x="0" y="470" width="700" height="300" fill="#C9A9A5"/>
-  <rect x="0" y="470" width="700" height="14" fill="#AD7D79" opacity=".5"/>
-  <rect x="0" y="200" width="230" height="222" fill="#4F5775"/>
-  <rect x="14" y="214" width="202" height="194" fill="#F2EEEA"/>
+  <rect x="950" y="112" width="96" height="116" fill="#A4B0C8"/>
+  <path d="M950 228 990 176 1016 200 1046 168V228z" fill="#7F8CB0"/><circle cx="1020" cy="140" r="10" fill="#F7F5F1"/>
+  <path d="M0 420H640L700 470H0z" fill="#E9DCD7"/>
+  <rect x="0" y="470" width="700" height="300" fill="#DCC9C2"/>
+  <rect x="0" y="470" width="700" height="14" fill="#B28083" opacity=".3"/>
+  <rect x="0" y="200" width="230" height="222" fill="#323645"/>
+  <rect x="14" y="214" width="202" height="194" fill="#F2ECE8"/>
   <rect x="14" y="306" width="202" height="6" fill="#B3B9CC"/>
-  <ellipse cx="60" cy="290" rx="34" ry="16" fill="#D9B7A8"/><ellipse cx="140" cy="290" rx="34" ry="16" fill="#D3AE9E"/>
-  <ellipse cx="60" cy="390" rx="34" ry="16" fill="#D3AE9E"/><ellipse cx="140" cy="390" rx="34" ry="16" fill="#D9B7A8"/>
+  <ellipse cx="60" cy="290" rx="34" ry="16" fill="#E2B39B"/><ellipse cx="140" cy="290" rx="34" ry="16" fill="#D9A68F"/>
+  <ellipse cx="60" cy="390" rx="34" ry="16" fill="#D9A68F"/><ellipse cx="140" cy="390" rx="34" ry="16" fill="#E2B39B"/>
   <path d="M300 420 330 270 450 290 440 420z" fill="#F7F5F1"/>
-  <text x="338" y="318" font-family="Inter,sans-serif" font-weight="600" font-size="20" fill="#B9918E" transform="rotate(8 380 310)">COFFEE</text>
-  <rect x="345" y="340" width="70" height="7" rx="3" fill="#D9C3C0" transform="rotate(8 380 340)"/>
-  <rect x="342" y="362" width="76" height="7" rx="3" fill="#D9C3C0" transform="rotate(8 380 362)"/>
-  <rect x="340" y="384" width="66" height="7" rx="3" fill="#D9C3C0" transform="rotate(8 380 384)"/>
-  <ellipse cx="520" cy="250" rx="30" ry="70" fill="#69718F" transform="rotate(-30 520 250)"/>
-  <ellipse cx="600" cy="230" rx="30" ry="80" fill="#8E95AE" transform="rotate(20 600 230)"/>
-  <ellipse cx="560" cy="210" rx="26" ry="70" fill="#4F5775"/>
-  <path d="M520 330H620L606 420H534z" fill="#4F5775"/>
-  <ellipse cx="1300" cy="380" rx="28" ry="70" fill="#8E95AE" transform="rotate(-25 1300 380)"/>
-  <ellipse cx="1360" cy="370" rx="28" ry="76" fill="#69718F" transform="rotate(22 1360 370)"/>
-  <path d="M1270 470H1380L1366 560H1284z" fill="#B3B9CC"/>
-  <ellipse cx="960" cy="656" rx="140" ry="14" fill="#4F5775" opacity=".14"/>
-  <rect x="850" y="330" width="220" height="322" rx="18" fill="url(#gSlate)"/>
-  <rect x="840" y="314" width="240" height="40" rx="12" fill="#5A6280"/>
+  <text x="338" y="318" font-family="Inter,sans-serif" font-weight="600" font-size="20" fill="#B28083" transform="rotate(8 380 310)">COFFEE</text>
+  <rect x="345" y="340" width="70" height="7" rx="3" fill="#E2CFCB" transform="rotate(8 380 340)"/>
+  <rect x="342" y="362" width="76" height="7" rx="3" fill="#E2CFCB" transform="rotate(8 380 362)"/>
+  <rect x="340" y="384" width="66" height="7" rx="3" fill="#E2CFCB" transform="rotate(8 380 384)"/>
+  <ellipse cx="520" cy="250" rx="30" ry="70" fill="#6F7FAE" transform="rotate(-30 520 250)"/>
+  <ellipse cx="600" cy="230" rx="30" ry="80" fill="#8E9BC0" transform="rotate(20 600 230)"/>
+  <ellipse cx="560" cy="210" rx="26" ry="70" fill="#5A6390"/>
+  <path d="M520 330H620L606 420H534z" fill="#8A97B7"/>
+  <ellipse cx="1300" cy="380" rx="28" ry="70" fill="#8E9BC0" transform="rotate(-25 1300 380)"/>
+  <ellipse cx="1360" cy="370" rx="28" ry="76" fill="#6F7FAE" transform="rotate(22 1360 370)"/>
+  <path d="M1270 470H1380L1366 560H1284z" fill="#8A97B7"/>
+  <ellipse cx="960" cy="656" rx="140" ry="14" fill="#4F5773" opacity=".14"/>
+  <rect x="850" y="330" width="220" height="322" rx="18" fill="url(#gTrash)"/>
+  <rect x="840" y="314" width="240" height="40" rx="12" fill="#5E6A8C"/>
   <rect x="900" y="326" width="120" height="14" rx="7" fill="#191A21"/>
-  <text x="960" y="450" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="24" letter-spacing="2" fill="#B3B9CC">TRASH</text>
-  <path d="M942 480h36l-4 44h-28zM936 476h48M952 470h16" fill="none" stroke="#B3B9CC" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <ellipse cx="1450" cy="566" rx="130" ry="24" fill="#D9BEBA"/>
-  <rect x="1442" y="566" width="16" height="210" fill="#4F5775"/>
-  <ellipse cx="1450" cy="780" rx="70" ry="12" fill="#4F5775"/>
-  <rect x="1580" y="670" width="120" height="170" rx="12" fill="#C9A9A5"/>
-  <ellipse cx="1640" cy="670" rx="60" ry="14" fill="#D9BEBA"/>`;
+  <text x="960" y="450" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="24" letter-spacing="2" fill="#C9CFDF">TRASH</text>
+  <path d="M942 480h36l-4 44h-28zM936 476h48M952 470h16" fill="none" stroke="#C9CFDF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <ellipse cx="1450" cy="566" rx="130" ry="24" fill="#EDE9E4"/>
+  <rect x="1442" y="566" width="16" height="210" fill="#4F5773"/>
+  <ellipse cx="1450" cy="780" rx="70" ry="12" fill="#4F5773"/>
+  <rect x="1580" y="670" width="120" height="170" rx="12" fill="#B297A7"/>
+  <ellipse cx="1640" cy="670" rx="60" ry="14" fill="#E2D5DA"/>`;
 }
 
 /* ============================================================
-   STEP 1 — 집, 아침: 중고거래 사진 올리기
+   STEP 1 — 집 11:00: 중고거래 게시글 작성
+   클릭 → 업로드 창 생성 · 클릭 → 사진 올리기
    ============================================================ */
+function feedRow(y, thumb, price){
+  return `
+    <rect x="790" y="${y}" width="96" height="96" rx="14" fill="#E6E8F0"/>
+    <g transform="translate(790 ${y})">${thumb}</g>
+    <rect x="904" y="${y + 16}" width="170" height="13" rx="6" fill="#C9CEDD"/>
+    <rect x="904" y="${y + 38}" width="110" height="10" rx="5" fill="#E3E5EC"/>
+    <text x="904" y="${y + 80}" class="la" font-size="15" font-weight="600" fill="#535C88">₩ ${price}</text>
+    <path d="M1130 ${y + 62}c-6-6-16-2-16 6 0 7 16 16 16 16s16-9 16-16c0-8-10-12-16-6z" fill="none" stroke="#8E95AE" stroke-width="2.4"/>`;
+}
 function scene1(){
+  const lamp = `<ellipse cx="48" cy="78" rx="18" ry="4" fill="#535C88"/><line x1="48" y1="78" x2="48" y2="40" stroke="#535C88" stroke-width="4"/><path d="M26 44H70L62 18H34z" fill="#E7CFC7"/>`;
+  const chair = `<path d="M30 20h36v34H30z" fill="#7F8CB0"/><path d="M26 54h44v10H26z" fill="#5A6390"/><path d="M30 64l-4 22M66 64l4 22" stroke="#5A6390" stroke-width="5" stroke-linecap="round"/>`;
+  const mug = `<rect x="28" y="30" width="38" height="44" rx="8" fill="#D7AFA6"/><path d="M66 40c14 0 14 22 0 22" fill="none" stroke="#D7AFA6" stroke-width="6"/>`;
+  const books = `<rect x="22" y="58" width="54" height="16" rx="3" fill="#5A6390"/><rect x="26" y="42" width="48" height="16" rx="3" fill="#8E9BC0"/><rect x="20" y="26" width="56" height="16" rx="3" fill="#B3B9CC"/>`;
   const photo = `
-    <g data-show="photo posted">
-      <clipPath id="clipS1"><rect x="788" y="256" width="344" height="290" rx="20"/></clipPath>
+    <g data-show="posted">
+      <clipPath id="clipS1"><rect x="788" y="256" width="344" height="210" rx="18"/></clipPath>
       <g clip-path="url(#clipS1)">
-        <rect x="788" y="256" width="344" height="290" fill="#EDE9E7"/>
-        <rect x="1006" y="272" width="112" height="126" fill="#CFD5E3"/>
-        <rect x="1016" y="320" width="26" height="78" fill="#B3B9CC"/><rect x="1048" y="300" width="34" height="98" fill="#A9AFC3"/>
-        <rect x="1088" y="334" width="24" height="64" fill="#B3B9CC"/>
-        <rect x="1006" y="272" width="112" height="126" fill="none" stroke="#F7F5F2" stroke-width="7"/>
-        <rect x="788" y="456" width="344" height="90" fill="#C9A9A5"/>
-        <rect x="788" y="456" width="344" height="9" fill="#AD7D79"/>
-        <ellipse cx="878" cy="456" rx="36" ry="8" fill="#4F5775"/>
-        <line x1="878" y1="454" x2="878" y2="356" stroke="#4F5775" stroke-width="6"/>
-        <path d="M836 362H920L904 314H852z" fill="#E6D3CF"/>
-        <g transform="rotate(-6 1056 440)">
-          <rect x="1000" y="414" width="112" height="54" rx="3" fill="#FFFFFF"/>
-          <text x="1010" y="434" class="ko" font-size="12" font-weight="600" fill="#4F5775">김○○ 님</text>
-          <rect x="1010" y="442" width="84" height="5" rx="2" fill="#B3B9CC"/>
-          <rect x="1010" y="452" width="62" height="5" rx="2" fill="#B3B9CC"/>
+        <rect x="788" y="256" width="344" height="210" fill="#EDE9E7"/>
+        <rect x="1006" y="268" width="112" height="120" fill="#CFD5E3"/>
+        <rect x="1016" y="316" width="26" height="72" fill="#B3B9CC"/><rect x="1048" y="296" width="34" height="92" fill="#A9AFC3"/>
+        <rect x="1088" y="330" width="24" height="58" fill="#B3B9CC"/>
+        <rect x="1006" y="268" width="112" height="120" fill="none" stroke="#F7F5F2" stroke-width="7"/>
+        <rect x="788" y="420" width="344" height="60" fill="#D7B9B2"/>
+        <rect x="788" y="420" width="344" height="8" fill="#B28685"/>
+        <ellipse cx="878" cy="420" rx="34" ry="7" fill="#535C88"/>
+        <line x1="878" y1="418" x2="878" y2="336" stroke="#535C88" stroke-width="6"/>
+        <path d="M838 342H918L902 296H854z" fill="#E7CFC7"/>
+        <g transform="rotate(-6 1056 410)">
+          <rect x="1000" y="390" width="112" height="44" rx="3" fill="#FFFFFF"/>
+          <text x="1010" y="408" class="ko" font-size="11" font-weight="600" fill="#535C88">김○○ 님</text>
+          <rect x="1010" y="416" width="84" height="4" rx="2" fill="#B3B9CC"/>
+          <rect x="1010" y="424" width="62" height="4" rx="2" fill="#B3B9CC"/>
         </g>
       </g>
     </g>`;
+  const field = (y, k, v, la) => `
+    <text x="788" y="${y}" class="ko" font-size="13" fill="#8E95AE">${k}</text>
+    <text x="788" y="${y + 24}" class="${la ? 'la' : 'ko'}" font-size="17" font-weight="500" fill="#191A21">${v}</text>
+    <rect x="788" y="${y + 36}" width="344" height="2" fill="#ECEAE6"/>`;
   return svgOpen(SCENES[0].alt) + `
-  <rect width="1920" height="1080" fill="url(#gMorning)"/>
-  <path d="M0 0H560L260 1080H0z" fill="#FEFBF6" opacity=".55"/>
-  <rect x="1440" y="120" width="300" height="380" rx="6" fill="#E6E3E6" opacity=".55"/>
+  ${paperBg}
   ${phoneHandsBack()}
   ${phoneBody()}
   <g clip-path="url(#clipScreen)">
-    <text x="800" y="160" class="la" font-size="16" font-weight="600" fill="#4F5775">9:00</text>
-    <text x="790" y="216" class="la" font-size="26" fill="#4F5775">‹</text>
-    <text x="960" y="214" text-anchor="middle" class="ko" font-size="20" font-weight="600" fill="#191A21">판매글 쓰기</text>
-    <rect x="756" y="236" width="408" height="2" fill="#ECEAE6"/>
-    <g data-show="empty">
-      <rect x="788" y="256" width="344" height="290" rx="20" fill="#F1F2F6" stroke="#B3B9CC" stroke-width="2" stroke-dasharray="10 8"/>
-      <rect x="918" y="352" width="84" height="58" rx="12" fill="none" stroke="#4F5775" stroke-width="4"/>
-      <path d="M940 352l8-12h24l8 12" fill="none" stroke="#4F5775" stroke-width="4" stroke-linejoin="round"/>
-      <circle cx="960" cy="381" r="15" fill="none" stroke="#4F5775" stroke-width="4"/>
-      <text x="960" y="456" text-anchor="middle" class="ko" font-size="19" font-weight="600" fill="#4F5775">사진 올리기</text>
-      <text x="960" y="482" text-anchor="middle" class="la" font-size="14" fill="#8E95AE">0/10</text>
+    ${statusTime('11:00')}
+    <g data-show="feed">
+      <rect x="788" y="186" width="304" height="40" rx="20" fill="#E9EBF1"/>
+      <circle cx="812" cy="204" r="8" fill="none" stroke="#8E95AE" stroke-width="2.4"/><path d="M818 210l6 6" stroke="#8E95AE" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M1118 198a12 12 0 0 1 24 0v12l4 6h-32l4-6z" fill="none" stroke="#535C88" stroke-width="2.4" stroke-linejoin="round"/>
+      <text x="790" y="266" class="ko" font-size="14" font-weight="700" fill="#191A21">전체</text>
+      <rect x="790" y="274" width="30" height="3" rx="1.5" fill="#191A21"/>
+      <text x="840" y="266" class="ko" font-size="13" fill="#8E95AE">가전제품</text>
+      <text x="914" y="266" class="ko" font-size="13" fill="#8E95AE">가구</text>
+      <text x="960" y="266" class="ko" font-size="13" fill="#8E95AE">생활용품</text>
+      <text x="1036" y="266" class="ko" font-size="13" fill="#8E95AE">기타</text>
+      ${feedRow(300, lamp, '25,000')}${feedRow(420, chair, '40,000')}${feedRow(540, mug, '5,000')}${feedRow(660, books, '12,000')}
+      <rect x="790" y="780" width="96" height="96" rx="14" fill="#E6E8F0"/>
+      <rect x="1004" y="812" width="128" height="52" rx="26" fill="#5A6390"/>
+      <text x="1068" y="845" text-anchor="middle" class="ko" font-size="16" font-weight="600" fill="#FFFFFF">+ 글쓰기</text>
     </g>
-    ${photo}
-    <text x="788" y="588" class="ko" font-size="14" fill="#8E95AE">제목</text>
-    <text x="788" y="614" class="ko" font-size="18" font-weight="500" fill="#191A21">스탠드 조명 팝니다</text>
-    <rect x="788" y="628" width="344" height="2" fill="#ECEAE6"/>
-    <text x="788" y="664" class="ko" font-size="14" fill="#8E95AE">가격</text>
-    <text x="788" y="690" class="la" font-size="18" font-weight="600" fill="#191A21">₩ 25,000</text>
-    <rect x="788" y="704" width="344" height="2" fill="#ECEAE6"/>
-    <text x="788" y="740" class="ko" font-size="14" fill="#8E95AE">설명</text>
-    <rect x="788" y="754" width="300" height="10" rx="5" fill="#E3E5EC"/>
-    <rect x="788" y="774" width="230" height="10" rx="5" fill="#E3E5EC"/>
-    <rect x="788" y="830" width="344" height="56" rx="28" fill="#D9DBE3" data-show="empty"/>
-    <rect x="788" y="830" width="344" height="56" rx="28" fill="#1F97F8" data-show="photo posted"/>
-    <text x="960" y="865" text-anchor="middle" class="ko" font-size="18" font-weight="600" fill="#FFFFFF">게시하기</text>
-    <g data-show="posted">
-      <rect x="836" y="756" width="248" height="46" rx="23" fill="#191A21" opacity=".86"/>
-      <text x="960" y="786" text-anchor="middle" class="ko" font-size="16" fill="#FFFFFF">게시되었습니다</text>
+    <g data-show="form posted">
+      <text x="790" y="216" class="la" font-size="26" fill="#535C88">‹</text>
+      <text x="960" y="214" text-anchor="middle" class="ko" font-size="20" font-weight="600" fill="#191A21">판매글 쓰기</text>
+      <rect x="756" y="236" width="408" height="2" fill="#ECEAE6"/>
+      <g data-show="form">
+        <rect x="788" y="256" width="344" height="210" rx="18" fill="#F1F2F6" stroke="#B3B9CC" stroke-width="2" stroke-dasharray="10 8"/>
+        <rect x="918" y="314" width="84" height="58" rx="12" fill="none" stroke="#535C88" stroke-width="4"/>
+        <path d="M940 314l8-12h24l8 12" fill="none" stroke="#535C88" stroke-width="4" stroke-linejoin="round"/>
+        <circle cx="960" cy="343" r="15" fill="none" stroke="#535C88" stroke-width="4"/>
+        <text x="960" y="414" text-anchor="middle" class="ko" font-size="19" font-weight="600" fill="#535C88">사진 올리기</text>
+        <text x="960" y="440" text-anchor="middle" class="la" font-size="14" fill="#8E95AE">0/10</text>
+      </g>
+      ${photo}
+      ${field(496, '제목', '스탠드 조명 팝니다')}
+      ${field(558, '가격', '₩ 25,000', true)}
+      ${field(620, '거래 희망 지역', '○○동 · ○○역 근처')}
+      ${field(682, '연락처', '010-●●●●-1234', true)}
+      ${field(744, '입금 계좌', '○○은행 ●●●-●●-●●●●●')}
+      <rect x="788" y="834" width="344" height="50" rx="25" fill="#D9DBE3" data-show="form"/>
+      <text x="960" y="866" text-anchor="middle" class="ko" font-size="17" font-weight="600" fill="#FFFFFF" data-show="form">게시하기</text>
+      <g data-show="posted">${toast('게시되었습니다')}</g>
     </g>
   </g>
   ${notch}
   ${phoneHandsFront()}
   </svg>
-  <button class="hit cue" type="button" data-show="empty" data-act="upload" aria-label="사진 올리기" style="left:788px;top:256px;width:344px;height:290px"></button>
-  <button class="hit cue" type="button" data-show="photo" data-act="post" aria-label="게시하기" style="left:788px;top:830px;width:344px;height:56px;border-radius:28px"></button>`;
+  <button class="hit cue" type="button" data-show="feed" data-act="write" aria-label="글쓰기 — 중고거래 게시물 올리기" style="left:1004px;top:812px;width:128px;height:52px;border-radius:26px"></button>
+  <button class="hit cue" type="button" data-show="form" data-act="upload" aria-label="사진 올리기" style="left:788px;top:256px;width:344px;height:210px"></button>`;
 }
 function wire1(root, finish){
-  root.addEventListener('click', e => {
+  root.addEventListener('click', async e => {
     const a = e.target.closest('[data-act]');
     if (!a || S.busy) return;
-    if (a.dataset.act === 'upload'){ setState(root, 'photo'); live('사진을 올렸습니다. 게시하기 버튼이 켜졌습니다.'); root.querySelector('[data-act="post"]').focus(); }
-    if (a.dataset.act === 'post'){ setState(root, 'posted'); finish(); }
+    if (a.dataset.act === 'write'){
+      setState(root, 'form');
+      live('중고거래 게시물 업로드 창이 열렸습니다.');
+      root.querySelector('[data-act="upload"]').focus();
+    }
+    if (a.dataset.act === 'upload'){ setState(root, 'posted'); finish(); }
   });
 }
 
 /* ============================================================
-   STEP 2 — 카페, 점심: 영수증 버리기
+   STEP 2 — 카페 14:00: 음료 결제 · 드래그 → 영수증 버림
    ============================================================ */
 function scene2(){
   return svgOpen(SCENES[1].alt) + `
@@ -1029,13 +1216,13 @@ function scene2(){
       <rect x="936" y="274" width="52" height="4" rx="2" fill="#D3D6E0"/>
       <rect x="936" y="284" width="38" height="4" rx="2" fill="#D3D6E0"/>
     </g>
-    <rect x="840" y="314" width="240" height="40" rx="12" fill="#5A6280"/>
+    <rect x="840" y="314" width="240" height="40" rx="12" fill="#5E6A8C"/>
     <rect x="900" y="326" width="120" height="14" rx="7" fill="#191A21" opacity=".25"/>
   </g>
-  <path d="M440 520H620L600 820H460z" fill="#F4F1EE"/>
-  <path d="M448 610H612L604 720H456z" fill="#D9BEBA"/>
-  <path d="M452 494c10-46 146-46 156 0z" fill="#191A21"/>
-  <rect x="428" y="490" width="204" height="42" rx="14" fill="#191A21"/>
+  <path d="M440 520H620L600 820H460z" fill="#F4F2EF"/>
+  <path d="M448 610H612L604 720H456z" fill="#B28083"/>
+  <path d="M452 494c10-46 146-46 156 0z" fill="#21242D"/>
+  <rect x="428" y="490" width="204" height="42" rx="14" fill="#21242D"/>
   <path d="M150 1080c50-100 150-180 270-200l100 80c-20 50-40 90-50 120z" fill="url(#gSleeve)"/>
   <path d="M400 900c-20-80 0-180 50-220 50-30 110-10 130 40l20 180c-40 60-140 60-200 0z" fill="url(#gHand)"/>
   ${fin(470, 700, 600, 690, 42)}${fin(470, 752, 606, 744, 42)}${fin(476, 804, 600, 798, 40)}${fin(430, 724, 470, 640, 46)}
@@ -1045,17 +1232,17 @@ function scene2(){
   <g id="rcpt" data-show="hold">
     <g transform="rotate(8 1170 690)">
       <rect x="1070" y="500" width="200" height="380" fill="#FFFFFF"/>
-      <text x="1170" y="548" text-anchor="middle" class="la" font-size="19" font-weight="700" letter-spacing="1" fill="#4F5775">BLOOM CAFE</text>
+      <text x="1170" y="548" text-anchor="middle" class="la" font-size="19" font-weight="700" letter-spacing="1" fill="#4F5773">BLOOM CAFE</text>
       <text x="1170" y="572" text-anchor="middle" class="ko" font-size="12" fill="#8E95AE">블룸카페 ○○점</text>
       <rect x="1088" y="588" width="164" height="1.5" fill="#D3D6E0"/>
-      <text x="1088" y="612" class="la" font-size="12" fill="#4F5775">2026.10.05 12:31</text>
-      <text x="1088" y="640" class="ko" font-size="12" fill="#4F5775">아메리카노 1</text>
-      <text x="1252" y="640" text-anchor="end" class="la" font-size="12" fill="#4F5775">4,500</text>
+      <text x="1088" y="612" class="la" font-size="12" fill="#4F5773">2026.10.05 14:02</text>
+      <text x="1088" y="640" class="ko" font-size="12" fill="#4F5773">아메리카노 1</text>
+      <text x="1252" y="640" text-anchor="end" class="la" font-size="12" fill="#4F5773">4,500</text>
       <rect x="1088" y="654" width="164" height="1.5" fill="#D3D6E0"/>
-      <text x="1088" y="678" class="ko" font-size="12" fill="#4F5775">카드</text>
-      <text x="1252" y="678" text-anchor="end" class="la" font-size="12" fill="#4F5775">●●●● ●●●● 1234</text>
-      <text x="1088" y="702" class="ko" font-size="12" fill="#4F5775">적립</text>
-      <text x="1252" y="702" text-anchor="end" class="la" font-size="12" fill="#4F5775">010-●●●●-5678</text>
+      <text x="1088" y="678" class="ko" font-size="12" fill="#4F5773">카드</text>
+      <text x="1252" y="678" text-anchor="end" class="la" font-size="12" fill="#4F5773">●●●● ●●●● 1234</text>
+      <text x="1088" y="702" class="ko" font-size="12" fill="#4F5773">승인</text>
+      <text x="1252" y="702" text-anchor="end" class="la" font-size="12" fill="#4F5773">●●●●5678</text>
       <rect x="1088" y="724" width="140" height="6" rx="3" fill="#E3E5EC"/>
       <rect x="1088" y="742" width="110" height="6" rx="3" fill="#E3E5EC"/>
       <rect x="1100" y="790" width="140" height="44" fill="#E3E5EC"/>
@@ -1069,7 +1256,7 @@ function scene2(){
 }
 
 /* drag a group into a drop rect — tap alternative is the verb button (PRD 12) */
-function wireDrag(root, { group, hit, drop, center, land, onLand }){
+function wireDrag(root, { group, hit, drop, center, land, onStart, onLand }){
   const g = root.querySelector(group), h = root.querySelector(hit);
   let start = null, d = { x:0, y:0 }, moved = false;
   const put = (x, y, s = 1) =>
@@ -1079,6 +1266,7 @@ function wireDrag(root, { group, hit, drop, center, land, onLand }){
   async function throwIt(){
     if (S.busy) return;
     S.busy = true;
+    onStart?.();
     $$('.verb, .hit', root).forEach(b => b.style.opacity = '0');
     const from = { ...d };
     const to = { x:land.x - center.x, y:land.y - center.y };
@@ -1095,7 +1283,7 @@ function wireDrag(root, { group, hit, drop, center, land, onLand }){
     if (!start) return;
     const p = toStage(e);
     d = { x:p.x - start.x, y:p.y - start.y };
-    if (Math.hypot(d.x, d.y) > 8) moved = true;
+    if (!moved && Math.hypot(d.x, d.y) > 8){ moved = true; onStart?.(); }
     if (moved) put(d.x, d.y, 1);
   });
   const up = async e => {
@@ -1121,86 +1309,140 @@ function wire2(root, finish){
 }
 
 /* ============================================================
-   STEP 3 — 카페, 오후: 친구 사진 게시
+   STEP 3 — 카페 15:00: 지도 리뷰 남기기
+   화면 클릭 → 별점 책정 · 화면 클릭 → 업로드
    ============================================================ */
-/* the photo itself, in a 400×400 box */
-function photo3(){
-  return `
-    <rect width="400" height="400" fill="#EDE9E7"/>
-    <rect x="250" y="0" width="150" height="230" fill="#DCE0EA"/>
-    <circle cx="320" cy="150" r="60" fill="#C3C8D7"/><circle cx="390" cy="110" r="70" fill="#B3B9CC"/>
-    <rect x="244" y="0" width="12" height="230" fill="#C9CDD8"/>
-    <path d="M40 400c0-90 40-150 90-160h0c50 10 90 70 90 160z" fill="#B3B9CC"/>
-    <ellipse cx="130" cy="180" rx="44" ry="54" fill="#D9BEBA"/>
-    <path d="M84 176c0-46 22-70 48-70s46 22 46 62c-10-22-30-34-50-34-18 0-34 16-44 42z" fill="#4F5775"/>
-    <path d="M190 400c0-90 36-150 86-160h0c50 10 90 70 90 160z" fill="#AD7D79"/>
-    <path d="M226 260c-6-60 6-130 50-130s58 70 50 130z" fill="#6C6372"/>
-    <ellipse cx="276" cy="186" rx="40" ry="50" fill="#D3B5B0"/>
-    <path d="M236 180c4-34 20-54 40-54s38 18 40 50c-14-20-28-28-40-28s-28 12-40 32z" fill="#6C6372"/>
-    <rect x="0" y="330" width="400" height="70" fill="#C9A9A5"/>
-    <path d="M150 346h40l-4 40h-32z" fill="#F4F1EE"/><rect x="146" y="338" width="48" height="12" rx="4" fill="#191A21"/>
-    <path d="M226 350h36l-3 36h-30z" fill="#F4F1EE"/><rect x="222" y="342" width="44" height="11" rx="4" fill="#191A21"/>`;
-}
+const STAR = 'M0-18 5.3-6.4 18-5.6 8.4 2.9 11.1 15.4 0 9 -11.1 15.4 -8.4 2.9 -18-5.6 -5.3-6.4z';
 function scene3(){
+  const stars = [0, 1, 2, 3, 4].map(k => `<path class="star" data-k="${k}" d="${STAR}" transform="translate(${846 + k * 48} 626)" fill="#CACCD2"/>`).join('');
+  const cafeThumb = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})">
+      <rect width="84" height="84" rx="12" fill="#D9CFC8"/><rect y="52" width="84" height="32" fill="#C9B8AE"/>
+      <path d="M30 50h26l-3 18H33z" fill="#F4F2EF"/><path d="M56 54c8 0 8 10 0 10" fill="none" stroke="#F4F2EF" stroke-width="3"/>
+      <ellipse cx="18" cy="34" rx="7" ry="16" fill="#7F8CB0"/><ellipse cx="26" cy="30" rx="6" ry="14" fill="#5A6390"/></g>`;
   return svgOpen(SCENES[2].alt) + `
-  <g filter="url(#soft6)" opacity=".75">${cafeRoom()}</g>
-  <rect width="1920" height="1080" fill="#FEFBF6" opacity=".35"/>
+  ${paperBg}
   ${phoneHandsBack()}
   ${phoneBody()}
   <g clip-path="url(#clipScreen)">
-    <g data-show="cam">
-      <rect x="756" y="112" width="408" height="798" fill="#2A2C36"/>
-      <g transform="translate(756 230) scale(1.02)">${photo3()}</g>
-      <rect x="756" y="112" width="408" height="118" fill="#191A21" opacity=".92"/>
-      <text x="800" y="200" class="la" font-size="16" font-weight="600" fill="#EDE9E7">1×</text>
-      <rect x="756" y="638" width="408" height="272" fill="#191A21" opacity=".92"/>
-      <text x="960" y="684" text-anchor="middle" class="ko" font-size="15" font-weight="600" fill="#EDE9E7">사진</text>
-      <circle cx="960" cy="790" r="44" fill="none" stroke="#EDE9E7" stroke-width="5"/>
-      <circle cx="960" cy="790" r="35" fill="#F7F5F2"/>
-      <rect x="800" y="766" width="48" height="48" rx="10" fill="#6C6372"/>
-    </g>
-    <g data-show="compose posted">
-      <text x="800" y="160" class="la" font-size="16" font-weight="600" fill="#4F5775">13:10</text>
-      <text x="960" y="214" text-anchor="middle" class="ko" font-size="20" font-weight="600" fill="#191A21">새 게시물</text>
-      <rect x="756" y="236" width="408" height="2" fill="#ECEAE6"/>
-      <clipPath id="clipS3"><rect x="788" y="256" width="344" height="260" rx="16"/></clipPath>
-      <g clip-path="url(#clipS3)"><g transform="translate(788 226) scale(.86)">${photo3()}</g></g>
-      <text x="788" y="554" class="ko" font-size="17" fill="#191A21">여기 괜찮다</text>
-      <rect x="788" y="574" width="344" height="60" rx="14" fill="#FFFFFF" stroke="#E3E5EC" stroke-width="2"/>
-      <path d="M812 592a12 12 0 0 1 24 0c0 10-12 22-12 22s-12-12-12-22z" fill="#4F5775"/><circle cx="824" cy="592" r="4" fill="#FFFFFF"/>
-      <text x="848" y="612" class="ko" font-size="17" font-weight="500" fill="#191A21">○○동 · 블룸카페</text>
-      <text x="788" y="672" class="ko" font-size="14" fill="#8E95AE">함께한 사람</text>
-      <text x="886" y="672" class="la" font-size="15" font-weight="500" fill="#191A21">@j○○_</text>
-      <rect x="788" y="688" width="344" height="2" fill="#ECEAE6"/>
-      <text x="788" y="726" class="ko" font-size="14" fill="#8E95AE">위치 자동 태그</text>
-      <rect x="1078" y="708" width="54" height="30" rx="15" fill="#1F97F8"/><circle cx="1117" cy="723" r="11" fill="#FFFFFF"/>
-      <rect x="788" y="830" width="344" height="56" rx="28" fill="#1F97F8"/>
-      <text x="960" y="865" text-anchor="middle" class="ko" font-size="18" font-weight="600" fill="#FFFFFF">게시</text>
-    </g>
-    <g data-show="posted">
-      <rect x="836" y="756" width="248" height="46" rx="23" fill="#191A21" opacity=".86"/>
-      <text x="960" y="786" text-anchor="middle" class="ko" font-size="16" fill="#FFFFFF">게시되었습니다</text>
-    </g>
-    <rect id="flash" x="756" y="112" width="408" height="798" fill="#FFFFFF" opacity="0"/>
+    <rect x="756" y="112" width="408" height="320" fill="#EFF0F1"/>
+    <path d="M756 300 1164 180M820 112 980 432M756 220 1000 432M1060 112 1164 260M900 112 1164 380" stroke="#FFFFFF" stroke-width="16"/>
+    <path d="M1040 300l90-40 40 90-90 40z" fill="#D5E3D3"/><path d="M780 360l70-30 30 60-70 30z" fill="#D6DEEA"/>
+    ${statusTime('15:00')}
+    <text x="790" y="216" class="la" font-size="26" fill="#535C88">‹</text>
+    <circle cx="1088" cy="204" r="8" fill="none" stroke="#535C88" stroke-width="2.4"/><path d="M1094 210l6 6" stroke="#535C88" stroke-width="2.4" stroke-linecap="round"/>
+    <g fill="#535C88"><circle cx="1124" cy="206" r="2.6"/><circle cx="1133" cy="206" r="2.6"/><circle cx="1142" cy="206" r="2.6"/></g>
+    <path d="M960 352c-24-26-36-44-36-60a36 36 0 0 1 72 0c0 16-12 34-36 60z" fill="#B9816F"/>
+    <circle cx="960" cy="292" r="20" fill="#F4E9E4"/><path d="M950 288h16l-2 12h-12z" fill="#B9816F"/>
+    <rect x="756" y="400" width="408" height="510" rx="26" fill="#FBFAF8"/>
+    ${cafeThumb(788, 424, 1)}
+    <text x="890" y="452" class="la" font-size="18" font-weight="700" fill="#191A21">BLOOM CAFE</text>
+    <text x="890" y="476" class="ko" font-size="13" fill="#8E95AE">카페 · 1.2km</text>
+    <rect x="890" y="488" width="176" height="30" rx="15" fill="#E9EBF3"/>
+    <path d="M904 510v-8M910 510v-12M916 510v-5" stroke="#535C88" stroke-width="2.6" stroke-linecap="round"/>
+    <text x="926" y="508" class="ko" font-size="13" fill="#535C88">총 5회 방문했어요</text>
+    <rect x="788" y="536" width="344" height="2" fill="#ECEAE6"/>
+    <circle cx="808" cy="574" r="18" fill="#646CA0"/><circle cx="808" cy="568" r="7" fill="#C9CEE6"/><path d="M796 584a12 9 0 0 1 24 0z" fill="#C9CEE6"/>
+    <text x="836" y="580" class="la" font-size="17" font-weight="600" fill="#191A21">sujin</text>
+    ${stars}
+    <rect x="788" y="660" width="344" height="84" rx="12" fill="#FFFFFF" stroke="#D9DCE4" stroke-width="2"/>
+    <text x="806" y="692" class="ko" font-size="14" fill="#8E95AE">이곳의 분위기, 커피, 서비스는</text>
+    <text x="806" y="714" class="ko" font-size="14" fill="#8E95AE">어땠나요?</text>
+    ${cafeThumb(788, 756, .83)}
+    <circle cx="852" cy="760" r="10" fill="#191A21"/><path d="M848 756l8 8M856 756l-8 8" stroke="#FFFFFF" stroke-width="2"/>
+    <rect x="874" y="756" width="70" height="70" rx="10" fill="#E9EBF1"/>
+    <path d="M909 778v26M896 791h26" stroke="#8E95AE" stroke-width="2.4" stroke-linecap="round"/>
+    <rect x="788" y="840" width="344" height="52" rx="26" fill="#C9CEDD" data-show="rate"/>
+    <rect x="788" y="840" width="344" height="52" rx="26" fill="#5A6390" data-show="rated posted"/>
+    <text x="960" y="872" text-anchor="middle" class="ko" font-size="17" font-weight="600" fill="#FFFFFF">리뷰 등록하기</text>
+    <g data-show="posted">${toast('리뷰가 등록되었습니다', 776)}</g>
   </g>
   ${notch}
   ${phoneHandsFront()}
   </svg>
-  <button class="hit cue" type="button" data-show="cam" data-act="shutter" aria-label="셔터 누르기" style="left:912px;top:742px;width:96px;height:96px;border-radius:50%"></button>
-  <button class="hit cue" type="button" data-show="compose" data-act="post" aria-label="게시" style="left:788px;top:830px;width:344px;height:56px;border-radius:28px"></button>`;
+  ${[0, 1, 2, 3, 4].map(k => `<button class="hit${k === 3 ? ' cue' : ''}" type="button" data-show="rate rated" data-act="star" data-k="${k}" aria-label="별점 ${k + 1}점" style="left:${822 + k * 48}px;top:602px;width:48px;height:48px;border-radius:50%"></button>`).join('')}
+  <button class="hit cue" type="button" data-show="rated" data-act="post" aria-label="리뷰 등록하기" style="left:788px;top:840px;width:344px;height:52px;border-radius:26px"></button>`;
+}
+function paintStars(root, n){
+  $$('.star', root).forEach(s => s.setAttribute('fill', +s.dataset.k < n ? '#CCB28B' : '#CACCD2'));
 }
 function wire3(root, finish){
-  root.addEventListener('click', async e => {
+  root.addEventListener('click', e => {
     const a = e.target.closest('[data-act]');
     if (!a || S.busy) return;
-    if (a.dataset.act === 'shutter'){
-      S.busy = true;
-      const f = root.querySelector('#flash');
-      await tween(140, t => f.setAttribute('opacity', t));
-      setState(root, 'compose');
-      await tween(260, t => f.setAttribute('opacity', 1 - t));
-      S.busy = false;
-      live('사진을 찍었습니다. 위치가 자동으로 태그됐습니다.');
+    if (a.dataset.act === 'star'){
+      const n = +a.dataset.k + 1;
+      paintStars(root, n);
+      $$('[data-act="star"]', root).forEach(b => b.classList.remove('cue'));
+      setState(root, 'rated');
+      live(`별점 ${n}점. 리뷰 등록하기 버튼이 켜졌습니다.`);
+    }
+    if (a.dataset.act === 'post'){ setState(root, 'posted'); finish(); }
+  });
+}
+
+/* ============================================================
+   STEP 4 — 카페 17:00: 인스타그램 사진 업로드
+   ============================================================ */
+function scene4(){
+  const cupPhoto = `
+    <rect x="788" y="244" width="344" height="300" rx="12" fill="#E3E3EA"/>
+    <path d="M1010 244h122v300H960z" fill="#F1EFEE"/>
+    <path d="M1060 244h72v120z" fill="#FBFAF8" opacity=".7"/>
+    <ellipse cx="1110" cy="330" rx="16" ry="34" fill="#8E9BA0" opacity=".55" transform="rotate(30 1110 330)"/>
+    <ellipse cx="1124" cy="390" rx="14" ry="30" fill="#8E9BA0" opacity=".5" transform="rotate(-20 1124 390)"/>
+    <path d="M788 470c60-30 280-36 344-10v84H788z" fill="#E6E1DC"/>
+    <ellipse cx="930" cy="502" rx="64" ry="12" fill="#B9B4BF" opacity=".5"/>
+    <path d="M890 364h80l-8 132h-64z" fill="#F4F2EF"/>
+    <path d="M893 406h74l-4 56h-66z" fill="#B8A59C"/>
+    <rect x="882" y="346" width="96" height="22" rx="8" fill="#D8D4D2"/>`;
+  const row = (y, icon, text, extra = '') => `
+    <g transform="translate(796 ${y - 16})" fill="none" stroke="#535C88" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${icon}</g>
+    <text x="832" y="${y + 6}" class="ko" font-size="15" fill="#191A21" ${extra}>${text}</text>
+    <path d="M1122 ${y - 8}l8 8-8 8" fill="none" stroke="#8E95AE" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`;
+  return svgOpen(SCENES[3].alt) + `
+  ${paperBg}
+  ${phoneHandsBack()}
+  ${phoneBody()}
+  <g clip-path="url(#clipScreen)">
+    ${statusTime('17:00')}
+    <path d="M790 198l16 16M806 198l-16 16" stroke="#535C88" stroke-width="2.6" stroke-linecap="round"/>
+    <text x="960" y="214" text-anchor="middle" class="ko" font-size="19" font-weight="600" fill="#191A21">새 게시물</text>
+    <text x="1132" y="214" text-anchor="end" class="ko" font-size="17" font-weight="600" fill="#B3B9CC" data-show="compose">공유</text>
+    <text x="1132" y="214" text-anchor="end" class="ko" font-size="17" font-weight="600" fill="#535C88" data-show="located posted">공유</text>
+    ${cupPhoto}
+    <rect x="788" y="560" width="76" height="76" rx="8" fill="#E3E3EA" stroke="#5A6390" stroke-width="3"/>
+    <path d="M812 584h24l-3 36h-18z" fill="#F4F2EF"/>
+    <rect x="876" y="560" width="76" height="76" rx="8" fill="#ECE9E6"/>
+    <path d="M914 626c0-30 10-50 24-60M914 600c-10-6-18-6-24-2M916 588c8-8 16-10 22-8" stroke="#8E9BA0" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <rect x="964" y="560" width="76" height="76" rx="8" fill="#DADCE6"/>
+    <rect x="1052" y="560" width="76" height="76" rx="8" fill="#E3E3EA"/>
+    <rect x="1140" y="560" width="76" height="76" rx="8" fill="#DADCE6"/>
+    <rect x="788" y="656" width="344" height="2" fill="#ECEAE6"/>
+    ${row(686, '<circle cx="9" cy="6" r="6"/><path d="M-1 22a10 9 0 0 1 20 0"/>', '사람 태그하기')}
+    <rect x="788" y="708" width="344" height="2" fill="#ECEAE6"/>
+    <g data-show="compose">${row(738, '<path d="M9 22s-9-8-9-14a9 9 0 0 1 18 0c0 6-9 14-9 14z"/><circle cx="9" cy="8" r="3"/>', '위치 추가')}</g>
+    <g data-show="located posted">
+      <rect x="784" y="716" width="352" height="46" rx="12" fill="#FFFFFF" stroke="#E3E5EC" stroke-width="2"/>
+      <path d="M805 742s-9-8-9-14a9 9 0 0 1 18 0c0 6-9 14-9 14z" fill="#535C88"/><circle cx="805" cy="728" r="3" fill="#FFFFFF"/>
+      <text x="832" y="744" class="ko" font-size="15" font-weight="600" fill="#191A21">BLOOM CAFE · ○○동</text>
+    </g>
+    <rect x="788" y="760" width="344" height="2" fill="#ECEAE6"/>
+    ${row(790, '<path d="M6 20V2l12-2v16"/><circle cx="3" cy="20" r="3"/><circle cx="15" cy="16" r="3"/>', '음악 추가')}
+    <g data-show="posted">${toast('공유되었습니다', 836)}</g>
+  </g>
+  ${notch}
+  ${phoneHandsFront()}
+  </svg>
+  <button class="hit cue" type="button" data-show="compose" data-act="place" aria-label="위치 추가" style="left:788px;top:712px;width:344px;height:48px;border-radius:12px"></button>
+  <button class="hit cue" type="button" data-show="located" data-act="post" aria-label="공유" style="left:1080px;top:186px;width:68px;height:44px;border-radius:12px"></button>`;
+}
+function wire4(root, finish){
+  root.addEventListener('click', e => {
+    const a = e.target.closest('[data-act]');
+    if (!a || S.busy) return;
+    if (a.dataset.act === 'place'){
+      setState(root, 'located');
+      live('위치가 추가됐습니다: BLOOM CAFE. 공유 버튼이 켜졌습니다.');
       root.querySelector('[data-act="post"]').focus();
     }
     if (a.dataset.act === 'post'){ setState(root, 'posted'); finish(); }
@@ -1208,87 +1450,136 @@ function wire3(root, finish){
 }
 
 /* ============================================================
-   STEP 4 — 집, 저녁: 택배 상자 버리기 (PRD 13-1 권장 B)
+   STEP 5 — 집 20:00: 택배 수령
+   스와이프 → 택배박스 개봉 · 드래그 → 택배상자 버리기
    ============================================================ */
-function scene4(){
-  return svgOpen(SCENES[3].alt) + `
-  <rect width="1920" height="1080" fill="url(#gEveWall)"/>
-  <path d="M0 770 1920 748V1080H0z" fill="#E9E5E4"/>
-  <g transform="translate(70 80)">
-  <rect x="140" y="90" width="460" height="520" fill="url(#gEveSky)"/>
-  <circle cx="500" cy="190" r="34" fill="#EDE9E7"/>
-  <rect x="160" y="380" width="90" height="230" fill="#3E4560"/><rect x="262" y="320" width="120" height="290" fill="#353B54"/>
-  <rect x="396" y="420" width="80" height="190" fill="#3E4560"/><rect x="486" y="360" width="100" height="250" fill="#353B54"/>
-  <g fill="#EDE9E7" opacity=".75"><rect x="180" y="410" width="14" height="14"/><rect x="214" y="450" width="14" height="14"/><rect x="290" y="350" width="14" height="14"/>
-  <rect x="330" y="400" width="14" height="14"/><rect x="420" y="450" width="14" height="14"/><rect x="510" y="390" width="14" height="14"/><rect x="546" y="440" width="14" height="14"/></g>
-  <rect x="140" y="90" width="460" height="520" fill="none" stroke="#F3F1EC" stroke-width="18"/>
-  <rect x="362" y="90" width="16" height="520" fill="#F3F1EC"/>
-  <path d="M600 70h70v600c-30 10-50 10-70 0z" fill="#B3B9CC"/>
-  </g>
-  <circle cx="1720" cy="300" r="380" fill="url(#gLamp)"/>
-  <line x1="1720" y1="250" x2="1720" y2="770" stroke="#4F5775" stroke-width="7"/>
-  <ellipse cx="1720" cy="774" rx="60" ry="12" fill="#4F5775"/>
-  <path d="M1640 250H1800L1770 168H1670z" fill="#E6D3CF"/>
-  <ellipse cx="1440" cy="906" rx="170" ry="14" fill="#4F5775" opacity=".14"/>
-  <rect x="1288" y="520" width="304" height="30" rx="10" fill="#8E95AE"/>
-  <rect x="1302" y="524" width="276" height="20" rx="6" fill="#4F5775"/>
-  <g id="binfront">
-    <path d="M1300 540H1580L1562 900H1318z" fill="#B3B9CC"/>
-    <rect x="1370" y="650" width="140" height="50" rx="25" fill="#F3F1EC"/>
-    <text x="1440" y="683" text-anchor="middle" class="ko" font-size="22" font-weight="600" fill="#4F5775">종이</text>
-  </g>
+function scene5(){
+  return svgOpen(SCENES[4].alt) + `
+  <rect width="1920" height="1080" fill="#EDE8DD"/>
+  <path d="M0 640 1920 600V1080H0z" fill="#D2D1E0"/>
+  <path d="M0 640 1920 600 1920 640 0 684z" fill="#E4E2EC"/>
+  <path d="M500 1080 1300 640H1700L1100 1080z" fill="#E1DFEA" opacity=".7"/>
+  <path d="M60 640H300L320 600H80z" fill="#D7C9D1"/><rect x="60" y="640" width="240" height="22" fill="#C9B3BE"/>
+  <path d="M80 600H320L336 566H96z" fill="#E4DAE0"/><rect x="80" y="600" width="240" height="18" fill="#D2C3CB"/>
+  <path d="M150 566H250L240 480H160z" fill="#869BC4"/>
+  <ellipse cx="160" cy="400" rx="30" ry="86" fill="#8E9BC0" transform="rotate(-35 160 400)"/>
+  <ellipse cx="240" cy="380" rx="30" ry="90" fill="#6F7FAE" transform="rotate(30 240 380)"/>
+  <ellipse cx="200" cy="360" rx="26" ry="90" fill="#7F8CB0"/>
+  <path d="M1640 60H1920V240H1600z" fill="#CBC5D4"/>
+  <rect x="1760" y="240" width="40" height="330" fill="#6A7AA8"/>
+  <ellipse cx="1780" cy="580" rx="90" ry="18" fill="#6A7AA8"/>
+  <ellipse cx="1630" cy="944" rx="150" ry="12" fill="#535C88" opacity=".14"/>
+  <rect x="1488" y="560" width="284" height="28" rx="10" fill="#8E9BC0"/>
+  <rect x="1500" y="563" width="260" height="18" rx="6" fill="#535C88"/>
   <g id="box">
-    <path d="M750 500H1230L1210 430H770z" fill="#BE9792"/>
-    <path d="M700 560H1180L1230 500H750z" fill="#8F6763"/>
-    <path d="M700 560 750 500 690 430 640 490z" fill="#D2B2AD"/>
-    <path d="M1180 560 1230 500 1300 540 1250 600z" fill="#D2B2AD"/>
-    <path d="M1180 560 1230 500V830L1180 900z" fill="#AD7D79"/>
-    <rect x="700" y="560" width="480" height="340" fill="#C9A39E"/>
-    <rect x="1080" y="560" width="40" height="340" fill="#E3CFCB" opacity=".7"/>
+    <g data-show="open hold thrown">
+      <path d="M750 500H1230L1210 430H770z" fill="#C59E96"/>
+      <path d="M700 560H1180L1230 500H750z" fill="#8F6763"/>
+      <path d="M790 552c30-50 90-40 120-20 40-40 120-30 150 10 40-20 90-10 110 10H780z" fill="#F1EEF2"/>
+      <path d="M700 560 750 500 690 430 640 490z" fill="#D9BAB2"/>
+      <path d="M1180 560 1230 500 1300 540 1250 600z" fill="#D9BAB2"/>
+    </g>
+    <g data-show="closed">
+      <path d="M700 560H1180L1230 500H750z" fill="#D2ADA4"/>
+      <path d="M712 546H1192L1212 522H732z" fill="#E7D4CF"/>
+      <line id="cutline" x1="722" y1="534" x2="722" y2="534" stroke="#8F6763" stroke-width="4" stroke-linecap="round"/>
+    </g>
+    <path d="M1180 560 1230 500V830L1180 900z" fill="#A27A7A"/>
+    <rect x="700" y="560" width="480" height="340" fill="#C59C93"/>
+    <rect x="1080" y="560" width="40" height="340" fill="#E7D4CF" opacity=".7"/>
     <rect x="740" y="600" width="300" height="190" rx="6" fill="#FFFFFF"/>
     <text x="760" y="638" class="ko" font-size="15" fill="#8E95AE">받는 분</text>
     <text x="830" y="638" class="ko" font-size="18" font-weight="600" fill="#191A21">김○○</text>
     <text x="760" y="668" class="la" font-size="16" font-weight="500" fill="#191A21">010-●●●●-1234</text>
     <text x="760" y="698" class="ko" font-size="15" fill="#191A21">서울시 ○○구 ○○로 ●●, 302호</text>
-    <text x="760" y="728" class="ko" font-size="14" fill="#4F5775">품목  무선 이어폰 1개</text>
-    <g fill="#4F5775">${[0,6,10,18,22,30,36,40,48,52,60,66,72,78,84,92,98,104,110,118,124,130].map(x => `<rect x="${760 + x * 2}" y="744" width="${x % 3 ? 3 : 6}" height="30"/>`).join('')}</g>
+    <text x="760" y="728" class="ko" font-size="14" fill="#535C88">품목  무선 이어폰 1개</text>
+    <g fill="#535C88">${[0,6,10,18,22,30,36,40,48,52,60,66,72,78,84,92,98,104,110].map(x => `<rect x="${760 + x * 2}" y="744" width="${x % 3 ? 3 : 6}" height="30"/>`).join('')}
+      <rect x="990" y="744" width="30" height="30" fill="none" stroke="#535C88" stroke-width="3"/><rect x="998" y="752" width="8" height="8"/><rect x="1008" y="762" width="6" height="6"/></g>
   </g>
-  <g id="hands4">
+  <g id="binfront">
+    <path d="M1500 580H1760L1742 940H1518z" fill="#B3B9CC"/>
+    <rect x="1560" y="690" width="140" height="50" rx="25" fill="#F3F1EC"/>
+    <text x="1630" y="723" text-anchor="middle" class="ko" font-size="22" font-weight="600" fill="#535C88">종이</text>
+  </g>
+  <g id="handL" data-show="closed open">
     <path d="M260 1080c40-90 160-140 300-150l80 70-20 80z" fill="url(#gSleeve)"/>
     <path d="M560 940c0-80 60-140 140-150l20 110c-40 60-100 80-160 40z" fill="url(#gHand)"/>
     ${fin(690, 820, 772, 800, 42)}${fin(690, 872, 776, 858, 42)}
+  </g>
+  <g id="handR" data-show="open">
     <path d="M1660 1080c-40-90-160-140-300-150l-80 70 20 80z" fill="url(#gSleeve)"/>
     <path d="M1360 940c0-80-60-140-140-150l-20 110c40 60 100 80 160 40z" fill="url(#gHand)"/>
     ${fin(1230, 820, 1150, 800, 42)}${fin(1230, 872, 1146, 858, 42)}
   </g>
+  <g id="cutter" data-show="closed">
+    <path d="M1560 1080c20-90 90-170 200-200l200 20v180z" fill="url(#gSleeve)"/>
+    <g transform="rotate(-38 1330 560)">
+      <rect x="1300" y="470" width="60" height="210" rx="18" fill="#687BA7"/>
+      <rect x="1320" y="520" width="20" height="56" rx="6" fill="#4F5775"/>
+      <path d="M1310 472H1350L1330 412z" fill="#D9DCE6"/><path d="M1330 412 1350 472H1340z" fill="#192642"/>
+    </g>
+    <path d="M1300 700c-10-60 20-110 70-120 50-6 100 30 120 80l60 140c-40 70-160 80-220 30z" fill="url(#gHand)"/>
+    ${fin(1320, 640, 1258, 600, 40)}${fin(1338, 690, 1270, 652, 40)}${fin(1352, 738, 1290, 706, 38)}
+  </g>
   </svg>
-  <button class="hit drag" type="button" data-show="hold" tabindex="-1" aria-hidden="true" style="left:640px;top:420px;width:660px;height:490px"></button>
-  <button class="verb" type="button" data-show="hold" data-act="throw" style="left:960px;top:376px">버리기
+  <button class="hit swipe cue" type="button" data-show="closed" tabindex="-1" aria-hidden="true" style="left:700px;top:470px;width:540px;height:110px;border-radius:16px"></button>
+  <button class="verb" type="button" data-show="closed" data-act="open" style="left:960px;top:400px">개봉
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 9h13M10 4l5 5-5 5" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button class="hit drag" type="button" data-show="open" tabindex="-1" aria-hidden="true" style="left:640px;top:420px;width:660px;height:490px"></button>
+  <button class="verb" type="button" data-show="open" data-act="throw" style="left:960px;top:376px">버리기
     <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 9h13M10 4l5 5-5 5" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`;
 }
-function wire4(root, finish){
-  const hands = root.querySelector('#hands4');
-  root.querySelector('.hit.drag').addEventListener('pointerdown', () => { hands.style.transition = 'opacity .3s'; hands.style.opacity = '0'; });
+function wire5(root, finish){
+  const cut = root.querySelector('#cutline');
+  const opened = () => {
+    setState(root, 'open');
+    live('상자를 열었습니다. 송장이 붙은 상자를 분리수거함으로 끌어 버리세요.');
+    root.querySelector('[data-act="throw"]').focus();
+  };
+  /* swipe along the tape: left → right, at least 60% of its length */
+  const sw = root.querySelector('.hit.swipe');
+  let sx = null;
+  sw.addEventListener('pointerdown', e => { if (S.busy) return; sw.setPointerCapture(e.pointerId); sx = toStage(e).x; });
+  sw.addEventListener('pointermove', e => {
+    if (sx === null) return;
+    const x = clamp(toStage(e).x, sx, 1212);
+    cut.setAttribute('x1', clamp(sx, 722, 1212)); cut.setAttribute('x2', x);
+  });
+  const end = e => {
+    if (sx === null) return;
+    const dx = toStage(e).x - sx; sx = null;
+    if (dx > 290) opened(); else { cut.setAttribute('x2', cut.getAttribute('x1')); }
+  };
+  sw.addEventListener('pointerup', end);
+  sw.addEventListener('pointercancel', end);
+  root.querySelector('[data-act="open"]').addEventListener('click', async () => {
+    if (S.busy) return;
+    S.busy = true;
+    await tween(420, t => { cut.setAttribute('x1', 722); cut.setAttribute('x2', 722 + 490 * t); });
+    S.busy = false;
+    opened();
+  });
   /* while it is carried the box rides in front; once it lands it goes behind the bin's front so it reads as "in" */
+  const hide = () => ['#handL', '#handR'].forEach(s => { const h = root.querySelector(s); h.style.transition = 'opacity .3s'; h.style.opacity = '0'; });
   wireDrag(root, {
     group:'#box', hit:'.hit.drag',
-    drop:{ x:1260, y:420, w:360, h:520 },
-    center:{ x:940, y:665 }, land:{ x:1440, y:500, s:.5 },
+    drop:{ x:1460, y:480, w:340, h:480 },
+    center:{ x:940, y:665 }, land:{ x:1630, y:520, s:.45 },
+    onStart:hide,
     onLand:() => {
       const box = root.querySelector('#box');
       box.parentNode.insertBefore(box, root.querySelector('#binfront'));
-      hands.style.opacity = '0';
       setState(root, 'thrown'); finish();
     }
   });
-  root.querySelector('[data-act="throw"]').addEventListener('click', () => { hands.style.transition = 'opacity .3s'; hands.style.opacity = '0'; }, true);
 }
 
 const SCENE_ART = [
-  { build:scene1, wire:wire1, start:'empty',  end:'posted'  },
-  { build:scene2, wire:wire2, start:'hold',   end:'thrown'  },
-  { build:scene3, wire:wire3, start:'cam',    end:'posted'  },
-  { build:scene4, wire:wire4, start:'hold',   end:'thrown'  }
+  { build:scene1, wire:wire1, start:'feed',    end:'posted' },
+  { build:scene2, wire:wire2, start:'hold',    end:'thrown' },
+  { build:scene3, wire:wire3, start:'rate',    end:'posted' },
+  { build:scene4, wire:wire4, start:'compose', end:'posted' },
+  { build:scene5, wire:wire5, start:'closed',  end:'thrown' }
 ];
 
 function setState(root, st){
@@ -1304,9 +1595,9 @@ function setState(root, st){
    Scene frame (F-1…F-6)
    ============================================================ */
 function setHud(i){
-  const info = i < 4 ? SCENES[i] : COMBINE;
-  $('#step-h').textContent = `STEP ${i + 1}`;
-  $('#prog').textContent = `${i + 1}/5`;
+  const info = i < NSC ? SCENES[i] : COMBINE;
+  $('#step-h').textContent = i < NSC ? `STEP ${i + 1}` : '결합';
+  $('#prog').textContent = i < NSC ? `${i + 1}/${NSC}` : '';
   $('#hud-time').textContent = info.time;
   setLoc(info.loc, false);
 }
@@ -1318,7 +1609,7 @@ function renderStep(i){
   const ill = $('#ill');
   ill.className = '';
   $('#next').hidden = true;
-  if (i === 4){ renderCombine(); return; }
+  if (i === NSC){ renderCombine(); return; }
 
   const art = SCENE_ART[i];
   ill.innerHTML = art.build();
@@ -1326,14 +1617,14 @@ function renderStep(i){
     /* F-6 — coming back shows the aftermath; nothing is recovered */
     setState(ill, art.end);
     if (i === 1) ill.querySelector('#rcpt')?.remove();
-    if (i === 3){
+    if (i === 2) paintStars(ill, 4);
+    if (i === 4){
       const box = ill.querySelector('#box');
-      box.setAttribute('transform', 'translate(1440 500) scale(.5) translate(-940 -665)');
+      box.setAttribute('transform', 'translate(1630 520) scale(.45) translate(-940 -665)');
       box.parentNode.insertBefore(box, ill.querySelector('#binfront'));
-      ill.querySelector('#hands4').style.opacity = '0';
     }
     $('#next').hidden = false;
-    $('#next').textContent = i === 3 ? 'STEP 5로' : '다음 장면';
+    $('#next').textContent = i === NSC - 1 ? '결합으로' : '다음 장면';
   } else {
     setState(ill, art.start);
     art.wire(ill, () => leak(i));
@@ -1346,7 +1637,7 @@ async function swap(fn){
   await wait(800);
   fn();
   await frame();
-  els.forEach(e => e.classList.remove('faded'));
+  [...els, $('#fpcard')].forEach(e => e.classList.remove('faded'));
   focusStep();
   await wait(800);
 }
@@ -1412,15 +1703,47 @@ async function leak(i){
   live(`새어 나간 조각: ${sc.frags.map(f => f[0]).join(', ')}`);
   await burst(sc.leak, sc.frags);
   await updateCard();
-  await wait(1200);
+  await wait(500);
+  if (S.screen !== 'scene' || S.step !== i){ S.busy = false; return; }
+  await alertFor(i);
   S.busy = false;
   if (S.screen !== 'scene' || S.step !== i) return;
   await swap(() => renderStep(i + 1));
 }
 
+/* Mockup 04 「체험 후 유출 현황」 — the scene fades and an 알림 lists what this step leaked */
+function paintAlertFp(p){
+  const h = 72 * p / 100;
+  $('#alClipRect').setAttribute('y', 68 - h);
+  $('#alClipRect').setAttribute('height', h);
+  $('#al-pct').textContent = p + '%';
+}
+function alertFor(i){
+  const al = $('#alert');
+  $('#al-list').innerHTML = SCENES[i].frags.map(([l]) => `<li>${l}</li>`).join('');
+  paintAlertFp(exposure());
+  [$('#ill'), $('#hud'), $('#fpcard')].forEach(e => e.classList.add('faded'));
+  al.hidden = false;
+  if (!RM.matches) al.animate([{ opacity:0, transform:'translateY(12px)' }, { opacity:1, transform:'none' }], { duration:500, delay:300, fill:'backwards', easing:'ease-out' });
+  $('#alert-x').focus({ preventScroll:true });
+  return new Promise(res => {
+    const close = () => {
+      al.hidden = true;
+      $('#alert-x').onclick = null;
+      al.onkeydown = null;
+      res();
+    };
+    $('#alert-x').onclick = close;
+    al.onkeydown = e => { if (e.key === 'Escape'){ e.preventDefault(); close(); } };
+  });
+}
+
 $('#next').onclick = () => { if (!S.busy) swap(() => renderStep(S.step + 1)); };
+$('#alBase').innerHTML = fpMarkup;
+$('#alFill').innerHTML = fpMarkup;
 $('#back').onclick = () => {
   if (S.busy) return;
+  if (!$('#alert').hidden) return;
   if (S.step === 0){ goHome(); return; }
   swap(() => renderStep(S.step - 1));
 };
@@ -1449,7 +1772,7 @@ function renderCombine(){
       <button class="btn" type="button" id="c-go" hidden>되돌리러 가기</button>
     </div>`;
 
-  /* J-1 — every fragment of the day, left: morning, right: afternoon/evening */
+  /* J-1 — every fragment of the day, left: STEP 1–2, right: STEP 3–5 */
   const left = S.frags.filter(f => f.step <= 2), rightF = S.frags.filter(f => f.step > 2);
   const place = (list, x0) => list.forEach((f, k) => {
     const b = document.createElement('button');
@@ -1527,7 +1850,6 @@ async function addPiece(uid, el){
   }
   S.combined.push(uid);
   paintCombine(false);
-  await updateCard();
   const k = S.combined.length;
   live(`${S.frags.find(f => f.uid === uid).label} 결합. 남은 후보 ${kn(CANDS[k - 1])}명, 위치 ${COMBINE_LOC[k]}.${k >= 4 ? ' 한 사람이 남았습니다.' : ''}`);
   S.busy = false;
@@ -1578,19 +1900,21 @@ function wireCombine(ill){
    RETURN (PRD 7.4 / DESIGN 5.4, 6.6)
    ============================================================ */
 const SOL_ICON = {
-  photo:`<rect x="14" y="30" width="92" height="66" rx="12" fill="#B3B9CC"/><rect x="24" y="40" width="72" height="46" rx="6" fill="#FEFBF6"/>
-         <path d="M44 30l8-10h16l8 10" fill="#B3B9CC"/><ellipse cx="60" cy="78" rx="16" ry="4" fill="#4F5775"/><line x1="60" y1="78" x2="60" y2="58" stroke="#4F5775" stroke-width="3"/><path d="M50 60h20l-4-10h-12z" fill="#E6D3CF"/>`,
+  trade:`<path d="M18 24h70a10 10 0 0 1 10 10v36a10 10 0 0 1-10 10H48L30 96V80H18A10 10 0 0 1 8 70V34a10 10 0 0 1 10-10z" fill="#B3B9CC"/>
+         <g fill="#FEFBF6"><circle cx="36" cy="52" r="5"/><circle cx="53" cy="52" r="5"/><circle cx="70" cy="52" r="5"/></g>`,
   receipt:`<path d="M30 16h28v88l-6-6-6 6-6-6-4 6z" fill="#FFFFFF" stroke="#B3B9CC" stroke-width="2"/>
            <path d="M64 22h28v82l-6-6-6 6-6-6-6 6z" fill="#FFFFFF" stroke="#B3B9CC" stroke-width="2" transform="rotate(10 78 60)"/>
            <rect x="36" y="30" width="16" height="4" fill="#D3D6E0"/><rect x="36" y="42" width="12" height="4" fill="#D3D6E0"/>`,
+  review:`<path d="${STAR}" transform="translate(60 62) scale(2.3)" fill="#CCB28B"/>
+          <line x1="24" y1="100" x2="98" y2="22" stroke="#535C88" stroke-width="5" stroke-linecap="round"/>`,
   sns:`<path d="M40 44a20 20 0 0 1 40 0c0 18-20 40-20 40S40 62 40 44z" fill="#B3B9CC"/><circle cx="60" cy="44" r="7" fill="#FEFBF6"/>
-       <line x1="28" y1="96" x2="92" y2="20" stroke="#4F5775" stroke-width="5" stroke-linecap="round"/>`,
-  label:`<rect x="18" y="34" width="84" height="66" rx="6" fill="#C9A39E"/><path d="M34 46h44v34H50z" fill="#FFFFFF"/>
-         <path d="M50 80 78 80 78 46 50 80z" fill="#E3E5EC"/><path d="M78 46l12-12" stroke="#4F5775" stroke-width="3" stroke-linecap="round"/>`,
-  '2fa':`<rect x="38" y="14" width="44" height="92" rx="10" fill="#4F5775"/><rect x="43" y="24" width="34" height="68" rx="4" fill="#FEFBF6"/>
+       <line x1="28" y1="96" x2="92" y2="20" stroke="#535C88" stroke-width="5" stroke-linecap="round"/>`,
+  label:`<rect x="18" y="34" width="84" height="66" rx="6" fill="#C59C93"/><path d="M34 46h44v34H50z" fill="#FFFFFF"/>
+         <path d="M50 80 78 80 78 46 50 80z" fill="#E3E5EC"/><path d="M78 46l12-12" stroke="#535C88" stroke-width="3" stroke-linecap="round"/>`,
+  '2fa':`<rect x="38" y="14" width="44" height="92" rx="10" fill="#535C88"/><rect x="43" y="24" width="34" height="68" rx="4" fill="#FEFBF6"/>
          <g fill="#1F97F8">${[0,1,2,3,4,5].map(i => `<circle cx="${49 + (i % 3) * 11}" cy="${48 + Math.floor(i / 3) * 14}" r="3.5"/>`).join('')}</g>`
 };
-const SOL_CAP = { photo:'배경 없이', receipt:'찢어서', sns:'태그 끄기', label:'떼고 버리기', '2fa':'결합 차단' };
+const SOL_CAP = { trade:'채팅으로만', receipt:'찢어서', review:'기록 끄기', sns:'태그 끄기', label:'떼고 버리기', '2fa':'결합 차단' };
 
 $('#fixes').innerHTML = FIXES.map(f => `
   <label class="fix">
@@ -1740,7 +2064,10 @@ function makePNG(R){
    Reset (no storage to clear — the state object is the state)
    ============================================================ */
 function reset(){
-  Object.assign(S, { step:0, done:[false, false, false, false], frags:[], combined:[], checked:new Set(), consentT0:0, busy:false });
+  Object.assign(S, { step:0, done:[false, false, false, false, false], frags:[], combined:[], checked:new Set(), consentT0:0, busy:false });
+  $('#alert').hidden = true;
+  [$('#ill'), $('#hud'), $('#fpcard')].forEach(e => e.classList.remove('faded'));
+  Home.restore();
   UID = 0;
   $$('#fixes input').forEach(i => i.checked = false);
   $('#ill').innerHTML = '';
