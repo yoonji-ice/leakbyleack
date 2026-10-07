@@ -528,7 +528,7 @@ dialog .btn{margin-top:28px}
     <div class="alert" id="alert" role="dialog" aria-labelledby="alert-h" tabindex="-1" hidden>
       <div class="al-head">
         <h3 id="alert-h">알림</h3>
-        <button class="al-x" id="alert-x" type="button" aria-label="알림 닫고 다음 장면으로 (1.5초 뒤 자동으로 닫힘)">
+        <button class="al-x" id="alert-x" type="button" aria-label="알림 닫고 다음 장면으로 (1초 뒤 자동으로 닫힘)">
           <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 4l14 14M18 4 4 18" stroke="#111" stroke-width="2" stroke-linecap="round"/></svg>
         </button>
       </div>
@@ -1722,7 +1722,7 @@ function paintAlertFp(p){
   $('#alClipRect').setAttribute('height', h);
   $('#al-pct').textContent = p + '%';
 }
-const ALERT_MS = 1500;
+const ALERT_MS = 1000;
 let alertSeq = 0;
 function alertFor(i){
   const al = $('#alert');
