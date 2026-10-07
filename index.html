@@ -193,6 +193,19 @@ a{color:inherit}
 .cres .bigsec{font:600 160px/1 var(--font-latin);letter-spacing:-.03em;margin-top:18px}
 .cres .body{margin-top:28px}
 .cres .stat{margin-top:36px}
+/* 00 — your time vs. the average reading time, on one bar */
+.rbar{margin-top:32px}
+.rb-track{position:relative;height:28px;border-radius:0 8px 8px 0;background:var(--paper-deep)}
+.rb-avg,.rb-you{position:absolute;left:0;top:0;bottom:0;border-radius:0 8px 8px 0}
+.rb-avg{background:var(--ill-slate-light)}
+.rb-you{background:var(--signal);min-width:4px}
+/* where the average ends — stays visible when your time runs past it */
+.rb-mark{position:absolute;top:-6px;bottom:-6px;width:2px;margin-left:-1px;background:var(--ink-soft)}
+.rb-key{display:flex;gap:40px;margin-top:14px;font:400 17px/1.4 var(--font-ko);color:var(--ink-soft)}
+.rb-key span{display:inline-flex;align-items:center;gap:8px}
+.rb-key i{width:10px;height:10px;border-radius:50%;flex:none}
+.rb-key b{font:600 17px var(--font-latin);color:var(--ink)}
+.rbar .cap{margin-top:10px}
 .cres .stat b{font:600 22px var(--font-latin);color:var(--signal)}
 .cres .cap{margin-top:6px}
 .cres .btn{margin-top:48px}
@@ -499,6 +512,16 @@ dialog .btn{margin-top:28px}
       <h2 class="sr" id="cres-h" tabindex="-1">동의에 걸린 시간</h2>
       <p class="bigsec" id="cres-sec" aria-live="polite">0.0초</p>
       <p class="body" id="cres-len"></p>
+      <div class="rbar">
+        <div class="rb-track" id="rb" role="img">
+          <span class="rb-avg" id="rb-avg"></span><span class="rb-you" id="rb-you"></span><span class="rb-mark" id="rb-mark"></span>
+        </div>
+        <p class="rb-key" aria-hidden="true">
+          <span><i style="background:var(--signal)"></i>내가 쓴 시간 <b id="rb-you-t"></b></span>
+          <span><i style="background:var(--ill-slate-light)"></i>평균 읽기 시간 <b id="rb-avg-t"></b></span>
+        </p>
+        <p class="cap">성인 평균 묵독 속도 분당 202어절 기준 (대한안과학회지, 2016)</p>
+      </div>
       <p class="body stat"><b>45.6%</b>가 동의할 때 내용을 확인하지 않는다고 답했습니다.</p>
       <p class="cap">엠브레인 트렌드모니터, 2025.12</p>
       <p class="body" style="margin-top:28px">아무것도 수집하지 않았습니다. 지금까지는요.</p>
@@ -974,9 +997,32 @@ const TERM_BLOCKS = [
 ];
 $('#terms').innerHTML = TERM_BLOCKS.map(([h, p]) => `<h4>${h}</h4><p>${p}</p>`).join('') +
   `<p style="margin-top:16px">부칙 — 본 약관은 공고일로부터 적용됩니다. 종전의 약관은 본 약관으로 대체됩니다.</p>`;
-/* PRD 8 — no unsourced statistics; the only number here is one we can count. */
+/* PRD 8 — counted from the terms above; the reading speed is sourced in the caption.
+   Words = 어절, split on spaces, per block so a heading never runs into its paragraph. */
+const TERM_WORDS = $$('#terms h4, #terms p').reduce((n, el) => n + el.textContent.split(/\s+/).filter(Boolean).length, 0);
+const READ_WPM = 202.3;
+const READ_SEC = TERM_WORDS / READ_WPM * 60;
+const minSec = s => { const r = Math.round(s); return `약 ${Math.floor(r / 60)}분 ${r % 60}초`; };
 $('#cres-len').textContent =
-  `방금 넘긴 약관은 공백을 빼고 ${kn($('#terms').textContent.replace(/\s/g, '').length)}자였습니다.`;
+  `방금 넘긴 약관은 ${kn(TERM_WORDS)}어절이었습니다. 평균 속도로 읽으면 ${minSec(READ_SEC)}가 걸립니다.`;
+$('#rb-avg-t').textContent = minSec(READ_SEC);
+
+/* screen only — like the measured time, this bar is wiped on the way out */
+let readSeq = 0;
+function paintReadBar(sec){
+  const max = Math.max(sec, READ_SEC);
+  $('#rb-avg').style.width = $('#rb-mark').style.left = (100 * READ_SEC / max) + '%';
+  $('#rb-you-t').textContent = sec.toFixed(1) + '초';
+  $('#rb').setAttribute('aria-label', `내가 쓴 시간 ${sec.toFixed(1)}초, 평균 읽기 시간 ${minSec(READ_SEC)}`);
+  const seq = ++readSeq;
+  tween(700, t => { if (seq === readSeq) $('#rb-you').style.width = (100 * sec / max * t) + '%'; });
+}
+function clearReadBar(){
+  readSeq++;
+  $('#rb-you').style.width = '0';
+  $('#rb-you-t').textContent = '';
+  $('#rb').removeAttribute('aria-label');
+}
 
 function startConsent(){
   reset();
@@ -992,12 +1038,14 @@ $('#go-consent').onclick = () => {
   $('#cform').classList.add('off');
   $('#cres').classList.add('on');
   $('#cres-h').focus({ preventScroll:true });
-  live(`${sec.toFixed(1)}초 만에 동의했습니다.`);
+  paintReadBar(sec);
+  live(`${sec.toFixed(1)}초 만에 동의했습니다. 평균 읽기 시간은 ${minSec(READ_SEC)}입니다.`);
 };
 /* the measurement is wiped on the way out and never reaches the receipt */
 $('#go-day').onclick = () => {
   S.consentT0 = 0;
   $('#cres-sec').textContent = '';
+  clearReadBar();
   cardSet(0);
   renderStep(0);
   show('scene', false);
@@ -2099,6 +2147,7 @@ function reset(){
   Object.assign(S, { step:0, done:[false, false, false, false, false], frags:[], combined:[], checked:new Set(), consentT0:0, busy:false });
   $('#alert').hidden = true;
   alertSeq++;
+  clearReadBar();
   [$('#ill'), $('#hud'), $('#fpcard')].forEach(e => e.classList.remove('faded'));
   Home.restore();
   UID = 0;
