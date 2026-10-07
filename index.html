@@ -70,6 +70,8 @@
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:var(--paper)}
+/* body clips the 1920×1080 stage itself — on mobile the root's overflow:hidden alone still lets it widen the layout viewport, pushing the bottom-right (fingerprint card) off screen */
+body{position:fixed;inset:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0)}
 body{
   color:var(--ink);
   font-family:var(--font-ko);
@@ -523,10 +525,10 @@ dialog .btn{margin-top:28px}
       </dl>
     </div>
     <button class="btn" id="next" type="button" hidden>다음 장면</button>
-    <div class="alert" id="alert" role="dialog" aria-modal="true" aria-labelledby="alert-h" hidden>
+    <div class="alert" id="alert" role="dialog" aria-labelledby="alert-h" tabindex="-1" hidden>
       <div class="al-head">
         <h3 id="alert-h">알림</h3>
-        <button class="al-x" id="alert-x" type="button" aria-label="닫고 다음 장면으로">
+        <button class="al-x" id="alert-x" type="button" aria-label="알림 닫고 다음 장면으로 (3초 뒤 자동으로 닫힘)">
           <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 4l14 14M18 4 4 18" stroke="#111" stroke-width="2" stroke-linecap="round"/></svg>
         </button>
       </div>
@@ -644,8 +646,10 @@ const live = msg => { const l = $('#live'); l.textContent = ''; setTimeout(() =>
 const stage = $('#stage');
 let K = 1;
 function fit(){
-  K = Math.min(innerWidth / 1920, innerHeight / 1080);
-  const x = (innerWidth - 1920 * K) / 2, y = (innerHeight - 1080 * K) / 2;
+  /* body = the viewport minus safe areas (notch, home indicator) */
+  const W = document.body.clientWidth, H = document.body.clientHeight;
+  K = Math.min(W / 1920, H / 1080);
+  const x = (W - 1920 * K) / 2, y = (H - 1080 * K) / 2;
   stage.style.transform = `translate(${x}px,${y}px) scale(${K})`;
 }
 addEventListener('resize', fit);
@@ -1718,6 +1722,8 @@ function paintAlertFp(p){
   $('#alClipRect').setAttribute('height', h);
   $('#al-pct').textContent = p + '%';
 }
+const ALERT_MS = 3000;
+let alertSeq = 0;
 function alertFor(i){
   const al = $('#alert');
   $('#al-list').innerHTML = SCENES[i].frags.map(([l]) => `<li>${l}</li>`).join('');
@@ -1725,16 +1731,42 @@ function alertFor(i){
   [$('#ill'), $('#hud'), $('#fpcard')].forEach(e => e.classList.add('faded'));
   al.hidden = false;
   if (!RM.matches) al.animate([{ opacity:0, transform:'translateY(12px)' }, { opacity:1, transform:'none' }], { duration:500, delay:300, fill:'backwards', easing:'ease-out' });
-  $('#alert-x').focus({ preventScroll:true });
+  /* focus the card, not X — focus on X means the viewer is about to act, so it pauses the timer */
+  al.focus({ preventScroll:true });
+  const seq = ++alertSeq;
   return new Promise(res => {
+    /* closes by itself after ALERT_MS once fully shown; hover or focus on X pauses it; X / Esc close at once */
+    let left = ALERT_MS + (RM.matches ? 0 : 800), t0 = 0, timer = 0, hover = false;
+    const xFocused = () => document.activeElement === $('#alert-x');
+    const run = () => {
+      if (seq !== alertSeq || timer || hover || xFocused()) return;
+      t0 = performance.now();
+      timer = setTimeout(close, left);
+    };
+    const pause = () => {
+      if (!timer) return;
+      clearTimeout(timer); timer = 0;
+      left = Math.max(0, left - (performance.now() - t0));
+    };
+    const sync = () => (hover || xFocused()) ? pause() : run();
     const close = () => {
+      clearTimeout(timer);
+      if (seq !== alertSeq) return;
+      alertSeq++;
       al.hidden = true;
       $('#alert-x').onclick = null;
-      al.onkeydown = null;
+      off.abort();
       res();
     };
+    const off = new AbortController(), on = (type, fn) => al.addEventListener(type, fn, { signal:off.signal });
     $('#alert-x').onclick = close;
-    al.onkeydown = e => { if (e.key === 'Escape'){ e.preventDefault(); close(); } };
+    on('keydown', e => { if (e.key === 'Escape'){ e.preventDefault(); close(); } });
+    /* the cursor that just clicked often sits where the card appears — only a pointer that moves onto it counts as hover */
+    on('pointermove', e => { if (!hover && e.pointerType !== 'touch'){ hover = true; sync(); } });
+    on('pointerleave', () => { hover = false; sync(); });
+    on('focusin', () => setTimeout(sync));
+    on('focusout', () => setTimeout(sync));
+    run();
   });
 }
 
@@ -2066,6 +2098,7 @@ function makePNG(R){
 function reset(){
   Object.assign(S, { step:0, done:[false, false, false, false, false], frags:[], combined:[], checked:new Set(), consentT0:0, busy:false });
   $('#alert').hidden = true;
+  alertSeq++;
   [$('#ill'), $('#hud'), $('#fpcard')].forEach(e => e.classList.remove('faded'));
   Home.restore();
   UID = 0;
