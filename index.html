@@ -1800,11 +1800,21 @@ function alertFor(i){
     const close = () => {
       clearTimeout(timer);
       if (seq !== alertSeq) return;
-      alertSeq++;
-      al.hidden = true;
+      const done = ++alertSeq;
       $('#alert-x').onclick = null;
       off.abort();
-      res();
+      /* exit: fade, sink 8px and shrink a touch, easing out; reduced motion only fades */
+      al.style.pointerEvents = 'none';
+      const kf = RM.matches
+        ? [{ opacity:1 }, { opacity:0 }]
+        : [{ opacity:1, transform:'none' }, { opacity:0, transform:'translateY(8px) scale(.97)' }];
+      const exit = al.animate(kf, { duration:600, easing:'ease-out', fill:'forwards' });
+      exit.finished.catch(() => {}).then(() => {
+        if (alertSeq === done) al.hidden = true;
+        exit.cancel();
+        al.style.pointerEvents = '';
+        res();
+      });
     };
     const off = new AbortController(), on = (type, fn) => al.addEventListener(type, fn, { signal:off.signal });
     $('#alert-x').onclick = close;
