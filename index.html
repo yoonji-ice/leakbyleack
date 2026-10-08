@@ -267,20 +267,6 @@ a{color:inherit}
   transition:opacity .3s ease;
 }
 .verb:hover{border-color:var(--ink-soft)}
-/* STEP 2 look-around: the whole cafe drags; hint at both edges, first visit only */
-#ill.look{cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none}
-#ill.look.grabbing{cursor:grabbing}
-.look-hint{
-  position:absolute;top:50%;z-index:5;transform:translateY(-50%);pointer-events:none;
-  height:44px;padding:0 20px;border-radius:var(--radius-pill);display:flex;align-items:center;
-  background:rgba(255,255,255,.88);box-shadow:0 6px 24px rgba(17,17,17,.08);
-  font:600 16px/1 var(--font-ko);color:var(--ink);white-space:nowrap;
-  animation:hint-in .6s ease-out .9s backwards;transition:opacity .6s ease;
-}
-.look-hint.l{left:var(--edge-x)}
-.look-hint.r{right:var(--edge-x)}
-.look-hint.gone{opacity:0}
-@keyframes hint-in{from{opacity:0}}
 .verb svg{flex:none}
 #next{position:absolute;left:50%;bottom:var(--edge-y);transform:translateX(-50%);z-index:12}
 
@@ -389,7 +375,6 @@ dialog .btn{margin-top:28px}
 @media (prefers-reduced-motion: reduce){
   #ill,#hud,.eline,.btn,.verb,.figs,.intro{transition:none!important}
   .hit.cue::after{animation:none;opacity:.6}
-  .look-hint{animation:none;transition:none}
 }
 </style>
 </head>
@@ -787,7 +772,6 @@ const S = {
   frags:[],               // {uid, label, cat, step}
   combined:[],            // uids placed in the centre (max 4)
   checked:new Set(),
-  lookHinted:false,       // STEP 2 '끌어서 둘러보기' shown once per run
   consentT0:0,
   busy:false
 };
@@ -1111,8 +1095,8 @@ const toast = (text, y = 834) => `
   <rect x="820" y="${y}" width="280" height="50" rx="25" fill="#191A21" opacity=".86"/>
   <text x="960" y="${y + 32}" text-anchor="middle" class="ko" font-size="16" fill="#FFFFFF">${text}</text>`;
 
-/* the cafe room — STEP 2, in three parallax layers (back · mid · front) */
-function cafeBack(){
+/* the cafe room — STEP 2 */
+function cafeRoom(){
   return `
   <rect width="1920" height="1080" fill="url(#gCafeWall)"/>
   <path d="M0 700 1920 640V1080H0z" fill="#E6E2DF"/>
@@ -1130,10 +1114,7 @@ function cafeBack(){
   <text x="790" y="206" font-family="Georgia,serif" font-size="24" fill="#4F5773">Days</text>
   <rect x="790" y="228" width="100" height="14" rx="4" fill="#B3B9CC"/>
   <rect x="950" y="112" width="96" height="116" fill="#A4B0C8"/>
-  <path d="M950 228 990 176 1016 200 1046 168V228z" fill="#7F8CB0"/><circle cx="1020" cy="140" r="10" fill="#F7F5F1"/>`;
-}
-function cafeMid(){
-  return `
+  <path d="M950 228 990 176 1016 200 1046 168V228z" fill="#7F8CB0"/><circle cx="1020" cy="140" r="10" fill="#F7F5F1"/>
   <path d="M0 420H640L700 470H0z" fill="#E9DCD7"/>
   <rect x="0" y="470" width="700" height="300" fill="#DCC9C2"/>
   <rect x="0" y="470" width="700" height="14" fill="#B28083" opacity=".3"/>
@@ -1159,119 +1140,12 @@ function cafeMid(){
   <rect x="840" y="314" width="240" height="40" rx="12" fill="#5E6A8C"/>
   <rect x="900" y="326" width="120" height="14" rx="7" fill="#191A21"/>
   <text x="960" y="450" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="24" letter-spacing="2" fill="#C9CFDF">TRASH</text>
-  <path d="M942 480h36l-4 44h-28zM936 476h48M952 470h16" fill="none" stroke="#C9CFDF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
-}
-function cafeFront(){
-  return `
+  <path d="M942 480h36l-4 44h-28zM936 476h48M952 470h16" fill="none" stroke="#C9CFDF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
   <ellipse cx="1450" cy="566" rx="130" ry="24" fill="#EDE9E4"/>
   <rect x="1442" y="566" width="16" height="210" fill="#4F5773"/>
   <ellipse cx="1450" cy="780" rx="70" ry="12" fill="#4F5773"/>
   <rect x="1580" y="670" width="120" height="170" rx="12" fill="#B297A7"/>
   <ellipse cx="1640" cy="670" rx="60" ry="14" fill="#E2D5DA"/>`;
-}
-
-/* STEP 2 look-around — drag, swipe or ←→ slides the cafe; each layer moves at its own speed.
-   Painted layers later: set src (e.g. 'assets/cafe-back.png'). Each PNG is 1080 tall and
-   1920 + 2 × speed × CAFE_PAN wide (back 2040 · mid 2160 · front 2320), centred on the 1920 frame,
-   with the bin left where cafeMid draws it — it is the receipt's drop target. */
-const CAFE_PAN = 200;                    // front-layer slide each way, stage px
-const CAFE_LAYERS = [
-  { id:'back',  speed:.3, src:null, art:cafeBack },
-  { id:'mid',   speed:.6, src:null, art:cafeMid },
-  { id:'front', speed:1,  src:null, art:cafeFront }
-];
-/* reduced motion: no depth — every layer moves together, at the back layer's pace so no edge shows */
-const plxSpeed = L => RM.matches ? CAFE_LAYERS[0].speed : L.speed;
-/* no wide art yet, so the 1920 scene is enlarged about the centre just enough to cover its slide */
-const plxScale = L => L.src ? 1 : 1 + 2 * L.speed * CAFE_PAN / 1920;
-const cafePan = { off:0 };               // front-layer offset; + shows more of the left
-function cafeLayer(L, over = ''){
-  const s = plxScale(L), w = 1920 + 2 * L.speed * CAFE_PAN;
-  const art = L.src
-    ? `<image href="${L.src}" x="${960 - w / 2}" y="0" width="${w}" height="1080" preserveAspectRatio="none"/>`
-    : L.art();
-  return `<g data-plx="${L.id}"><g transform="translate(960 540) scale(${s}) translate(-960 -540)">${art}${over}</g></g>`;
-}
-/* a point drawn in a layer → where it is on the stage right now */
-function cafeAt(id, p){
-  const L = CAFE_LAYERS.find(l => l.id === id), s = plxScale(L);
-  return { x:960 + (p.x - 960) * s + cafePan.off * plxSpeed(L), y:540 + (p.y - 540) * s };
-}
-function cafeLook(root){
-  const svg = root.querySelector('svg.scene');
-  const layers = CAFE_LAYERS.map(L => [L, svg.querySelector(`[data-plx="${L.id}"]`)]);
-  const hints = $$('.look-hint', root);
-  let vel = 0, raf = 0, drag = null;
-  const off = new AbortController(), on = (el, type, fn) => el.addEventListener(type, fn, { signal:off.signal });
-  /* #ill and document outlive the scene — drop the listeners once this svg is gone */
-  const alive = () => svg.isConnected || (off.abort(), cancelAnimationFrame(raf), false);
-  const paint = () => layers.forEach(([L, g]) => g.setAttribute('transform', `translate(${(cafePan.off * plxSpeed(L)).toFixed(2)} 0)`));
-  /* returns true when the edge stopped it */
-  const set = v => { const c = clamp(v, -CAFE_PAN, CAFE_PAN); cafePan.off = c; paint(); return c !== v; };
-  /* let go → it slides on, slowing every frame, and stops dead at an edge */
-  const glide = () => {
-    cancelAnimationFrame(raf);
-    let t0 = performance.now();
-    const step = now => {
-      if (!alive()) return;
-      /* a frame's timestamp can predate t0 — never step backwards */
-      const dt = clamp(now - t0, 0, 48); t0 = Math.max(t0, now);
-      if (set(cafePan.off + vel * dt)) vel = 0;
-      vel *= Math.pow(.92, dt / 16.7);
-      if (Math.abs(vel) > .01) raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-  };
-  const seen = () => hints.forEach(h => { h.classList.add('gone'); setTimeout(() => h.remove(), RM.matches ? 0 : 700); });
-
-  cafePan.off = 0;
-  paint();
-  root.classList.add('look');
-  if (S.lookHinted) hints.forEach(h => h.remove());
-  else {
-    S.lookHinted = true;
-    live('카페 장면은 좌우로 끌거나 화살표 키로 둘러볼 수 있습니다.');
-    setTimeout(seen, 5000);
-  }
-
-  on(root, 'pointerdown', e => {
-    if (!alive() || S.busy || e.button > 0 || e.target.closest('button')) return;
-    cancelAnimationFrame(raf); vel = 0;
-    root.setPointerCapture(e.pointerId);
-    const x = toStage(e).x;
-    drag = { id:e.pointerId, x, trail:[{ x, t:e.timeStamp }] };
-    root.classList.add('grabbing');
-    seen();
-  });
-  on(root, 'pointermove', e => {
-    if (!drag || e.pointerId !== drag.id) return;
-    const x = toStage(e).x;
-    set(cafePan.off + x - drag.x);
-    drag.x = x;
-    drag.trail.push({ x, t:e.timeStamp });
-    while (drag.trail.length > 2 && e.timeStamp - drag.trail[0].t > 100) drag.trail.shift();
-  });
-  const up = e => {
-    if (!drag || e.pointerId !== drag.id) return;
-    const a = drag.trail[0], b = drag.trail[drag.trail.length - 1];
-    drag = null;
-    root.classList.remove('grabbing');
-    /* flick speed over the last ~100ms; a pointer held still before letting go doesn't slide */
-    vel = b.t > a.t && e.timeStamp - b.t < 80 ? clamp((b.x - a.x) / (b.t - a.t), -3, 3) : 0;
-    if (vel) glide();
-  };
-  on(root, 'pointerup', up);
-  on(root, 'pointercancel', up);
-  on(document, 'keydown', e => {
-    if (!alive() || S.busy || S.screen !== 'scene' || S.step !== 1) return;
-    if ((e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') || e.altKey || e.ctrlKey || e.metaKey) return;
-    if (document.querySelector('dialog[open]') || e.target.closest?.('input, textarea, select')) return;
-    e.preventDefault();
-    vel = e.key === 'ArrowLeft' ? .6 : -.6;   // ≈120px per press
-    seen();
-    glide();
-  });
-  on(RM, 'change', paint);
 }
 
 /* ============================================================
@@ -1385,8 +1259,8 @@ function wire1(root, finish){
    STEP 2 — 카페 14:00: 음료 결제 · 드래그 → 영수증 버림
    ============================================================ */
 function scene2(){
-  /* the thrown receipt sits in the bin, so it rides the mid layer */
-  const thrown = `
+  return svgOpen(SCENES[1].alt) + `
+  ${cafeRoom()}
   <g data-show="thrown">
     <g transform="rotate(-10 960 300)">
       <rect x="926" y="250" width="72" height="80" rx="3" fill="#FFFFFF"/>
@@ -1396,9 +1270,7 @@ function scene2(){
     </g>
     <rect x="840" y="314" width="240" height="40" rx="12" fill="#5E6A8C"/>
     <rect x="900" y="326" width="120" height="14" rx="7" fill="#191A21" opacity=".25"/>
-  </g>`;
-  return svgOpen(SCENES[1].alt) + `
-  ${cafeLayer(CAFE_LAYERS[0])}${cafeLayer(CAFE_LAYERS[1], thrown)}${cafeLayer(CAFE_LAYERS[2])}
+  </g>
   <path d="M440 520H620L600 820H460z" fill="#F4F2EF"/>
   <path d="M448 610H612L604 720H456z" fill="#B28083"/>
   <path d="M452 494c10-46 146-46 156 0z" fill="#21242D"/>
@@ -1432,9 +1304,7 @@ function scene2(){
   </svg>
   <button class="hit drag" type="button" data-show="hold" tabindex="-1" aria-hidden="true" style="left:1050px;top:490px;width:250px;height:410px"></button>
   <button class="verb" type="button" data-show="hold" data-act="throw" style="left:1180px;top:446px">
-    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M16 9H3M8 4 3 9l5 5" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>버리기</button>
-  <div class="look-hint l" aria-hidden="true">← 끌어서 둘러보기</div>
-  <div class="look-hint r" aria-hidden="true">끌어서 둘러보기 →</div>`;
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M16 9H3M8 4 3 9l5 5" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>버리기</button>`;
 }
 
 /* drag a group into a drop rect — tap alternative is the verb button (PRD 12) */
@@ -1443,17 +1313,16 @@ function wireDrag(root, { group, hit, drop, center, land, onStart, onLand }){
   let start = null, d = { x:0, y:0 }, moved = false;
   const put = (x, y, s = 1) =>
     g.setAttribute('transform', `translate(${center.x + x} ${center.y + y}) scale(${s}) translate(${-center.x} ${-center.y})`);
-  const at = v => typeof v === 'function' ? v() : v;
-  const inDrop = p => { const r = at(drop); return p.x > r.x && p.x < r.x + r.w && p.y > r.y && p.y < r.y + r.h; };
+  const inDrop = p => p.x > drop.x && p.x < drop.x + drop.w && p.y > drop.y && p.y < drop.y + drop.h;
 
   async function throwIt(){
     if (S.busy) return;
     S.busy = true;
     onStart?.();
     $$('.verb, .hit', root).forEach(b => b.style.opacity = '0');
-    const from = { ...d }, l = at(land);
-    const to = { x:l.x - center.x, y:l.y - center.y };
-    await tween(520, t => put(from.x + (to.x - from.x) * t, from.y + (to.y - from.y) * t - Math.sin(t * Math.PI) * 90, 1 - (1 - l.s) * t));
+    const from = { ...d };
+    const to = { x:land.x - center.x, y:land.y - center.y };
+    await tween(520, t => put(from.x + (to.x - from.x) * t, from.y + (to.y - from.y) * t - Math.sin(t * Math.PI) * 90, 1 - (1 - land.s) * t));
     S.busy = false;
     onLand();
   }
@@ -1485,13 +1354,8 @@ function wireDrag(root, { group, hit, drop, center, land, onStart, onLand }){
 function wire2(root, finish){
   wireDrag(root, {
     group:'#rcpt', hit:'.hit.drag',
-    /* the bin is in the mid layer — read where it is now */
-    drop:() => {
-      const a = cafeAt('mid', { x:820, y:280 }), b = cafeAt('mid', { x:1100, y:680 });
-      return { x:a.x, y:a.y, w:b.x - a.x, h:b.y - a.y };
-    },
-    center:{ x:1170, y:690 },
-    land:() => ({ ...cafeAt('mid', { x:962, y:300 }), s:.36 * plxScale(CAFE_LAYERS[1]) }),
+    drop:{ x:820, y:280, w:280, h:400 },
+    center:{ x:1170, y:690 }, land:{ x:962, y:300, s:.36 },
     onLand:() => { setState(root, 'thrown'); finish(); }
   });
 }
@@ -1764,7 +1628,7 @@ function wire5(root, finish){
 
 const SCENE_ART = [
   { build:scene1, wire:wire1, start:'feed',    end:'posted' },
-  { build:scene2, wire:wire2, start:'hold',    end:'thrown', look:cafeLook, leakAt:() => cafeAt('mid', SCENES[1].leak) },
+  { build:scene2, wire:wire2, start:'hold',    end:'thrown' },
   { build:scene3, wire:wire3, start:'rate',    end:'posted' },
   { build:scene4, wire:wire4, start:'compose', end:'posted' },
   { build:scene5, wire:wire5, start:'closed',  end:'thrown' }
@@ -1817,7 +1681,6 @@ function renderStep(i){
     setState(ill, art.start);
     art.wire(ill, () => leak(i));
   }
-  art.look?.(ill);
 }
 
 async function swap(fn){
@@ -1890,7 +1753,7 @@ async function leak(i){
   const sc = SCENES[i];
   sc.frags.forEach(([label, cat]) => S.frags.push({ uid:++UID, label, cat, step:i + 1 }));
   live(`새어 나간 조각: ${sc.frags.map(f => f[0]).join(', ')}`);
-  await burst(SCENE_ART[i].leakAt?.() ?? sc.leak, sc.frags);
+  await burst(sc.leak, sc.frags);
   await updateCard();
   await wait(500);
   if (S.screen !== 'scene' || S.step !== i){ S.busy = false; return; }
@@ -2291,7 +2154,7 @@ function makePNG(R){
    Reset (no storage to clear — the state object is the state)
    ============================================================ */
 function reset(){
-  Object.assign(S, { step:0, done:[false, false, false, false, false], frags:[], combined:[], checked:new Set(), consentT0:0, busy:false, lookHinted:false });
+  Object.assign(S, { step:0, done:[false, false, false, false, false], frags:[], combined:[], checked:new Set(), consentT0:0, busy:false });
   $('#alert').hidden = true;
   alertSeq++;
   clearReadBar();
